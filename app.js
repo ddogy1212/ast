@@ -591,28 +591,45 @@ $('#apply-cut').onclick = () => {
 $('#open-cut').onclick = openCutout;
 $('#close-cut').onclick = () => {if(!cutBusy)$('#cutout-dialog').close();};
 
-$('#save').onclick = async () => {
+
+function cardFileName(suffix=''){
+  const month=String(state.month).padStart(2,'0');
+  const day=String(state.day).padStart(2,'0');
+  const safeSuffix=String(suffix).replace(/[^0-9a-zA-Z가-힣_-]/g,'-').slice(0,50);
+  return 'hubble-photocard-'+month+'-'+day+(safeSuffix?'-'+safeSuffix:'')+'.png';
+}
+function clickToDownload(url,filename){
+  const a=document.createElement('a');
+  a.download=filename;a.href=url;
+  document.body.append(a);a.click();a.remove();
+}
+async function exportCardBlob(scale=2){
+  if(state.photos.length&&!state.bg)throw Error('먼저 NASA 사진이 완전히 로딩됐는지 확인해 주세요.');
+  await ensureFontsLoaded();
+  await document.fonts.ready;
+  const canvas=document.createElement('canvas');
+  cardDraw(canvas,true,scale);
+  return new Promise((resolve,reject)=>
+    canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG 이미지 생성에 실패했어요.')),'image/png'));
+}
+$('#save').onclick=async()=>{
+  const button=$('#save');button.disabled=true;
   error('');
-  if (state.photos.length && !state.bg) { error('먼저 NASA 사진이 완전히 로딩됐는지 확인해 주세요.'); return; }
-  try {
-    await ensureFontsLoaded();
-    await document.fonts.ready;
-    const output = document.createElement('canvas'); cardDraw(output, true);
-    const data = output.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.download = 'hubble-photocard-' + String(state.month).padStart(2, '0') + '-' + String(state.day).padStart(2, '0') + '.png';
-    a.href = data; document.body.append(a); a.click(); a.remove();
+  try{
+    const blob=await exportCardBlob(4);
+    const link=URL.createObjectURL(blob);
+    clickToDownload(link,cardFileName());
+    setTimeout(()=>URL.revokeObjectURL(link),30000);
     $('#promo-dialog').showModal();
-  } catch (e) { error('파일 저장 실패: 외부 이미지 접근 권한 또는 브라우저 설정을 확인해 주세요.'); }
+  }catch(e){error('사진 저장 실패: '+(e instanceof Error?e.message:'브라우저 권한을 확인해 주세요.'))}
+  finally{button.disabled=false;}
 };
-// Print submissions are intentionally separate from local PNG download.
-// A submission is successful ONLY after private Storage upload + validated DB RPC.
-let printerClient=null;
+// Submissions are confirmed only after both private Storage upload and validated RPC succeed.
+// The participant gets the same completed PNG downloaded locally after the request succeeds.
+let printerClient=null,printBusy=false,printDownloadUrl=null,printDownloadName='';
 async function getPrintClient(){
   const c=window.PRINT_CONFIG||{};
-  if(!c.supabaseUrl||!c.supabaseAnonKey){
-    throw new Error('인쇄 접수 서버가 아직 연결되지 않았어요. 우선 PNG 저장 기능을 이용해 주세요.');
-  }
+  if(!c.supabaseUrl||!c.supabaseAnonKey)throw Error('인쇄 접수 서버가 연결되지 않았어요.');
   if(!printerClient){
     const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
     printerClient=createClient(c.supabaseUrl,c.supabaseAnonKey,{
@@ -622,62 +639,108 @@ async function getPrintClient(){
   return printerClient;
 }
 function printMessage(msg,isError=false){
-  const el=$('#print-msg');el.textContent=msg;el.classList.toggle('err',isError);
+  const el=$('#print-msg');
+  el.textContent=msg;
+  el.classList.toggle('err',isError);
 }
 $('#request-print').onclick=()=>{
   printMessage('');
+  $('#print-fields').hidden=false;
+  $('#print-success').hidden=true;
   $('#print-dialog').showModal();
   if(!window.PRINT_CONFIG?.supabaseUrl||!window.PRINT_CONFIG?.supabaseAnonKey)
-    printMessage('⚠️ 인쇄 접수 서버 연결 전입니다. 관리자 설정을 완료해야 실제 사진이 전달돼요.',true);
+    printMessage('현재 인쇄 접수 서버가 연결되지 않았어요.',true);
 };
-$('#print-cancel').onclick=()=>$('#print-dialog').close();
+$('#print-cancel').onclick=()=>{
+  if(!printBusy)$('#print-dialog').close();
+};
+$('#print-dialog').addEventListener('cancel',e=>{if(printBusy)e.preventDefault()});
+$('#print-dialog').addEventListener('close',()=>{
+  if(printDownloadUrl){URL.revokeObjectURL(printDownloadUrl);printDownloadUrl=null;}
+});
+$('#print-download-again').onclick=()=>{
+  if(printDownloadUrl)clickToDownload(printDownloadUrl,printDownloadName);
+};
+$('#print-finish').onclick=()=>{
+  $('#print-dialog').close();
+  $('#promo-dialog').showModal();
+};
 $('#print-send').onclick=async()=>{
-  const nickname=$('#print-nickname').value.trim();
-  if(nickname.length<1||nickname.length>24){printMessage('표시할 이름을 1~24자로 입력해 주세요.',true);return;}
-  if(!$('#print-agree').checked){printMessage('사진 전송 및 인쇄 담당자 확인에 동의해야 접수할 수 있어요.',true);return;}
-  if(!state.bg||!state.photos.length){printMessage('먼저 허블 사진이 완전히 로딩되어야 해요.',true);return;}
-  const btn=$('#print-send');btn.disabled=true;
+  if(printBusy)return;
+  const studentNumber=$('#print-student-number').value.trim();
+  const studentName=$('#print-student-name').value.trim();
+  if(!/^[0-9]{4,8}$/.test(studentNumber)){
+    printMessage('학번을 숫자 4~8자리로 입력해 주세요. (예: 20313)',true);
+    return;
+  }
+  if(studentName.length<1||studentName.length>24){
+    printMessage('이름을 1~24자로 입력해 주세요.',true);
+    return;
+  }
+  if(!$('#print-agree').checked){
+    printMessage('학번·이름·포토카드 전송 안내에 동의해 주세요.',true);
+    return;
+  }
+  if(!state.bg||!state.photos.length){
+    printMessage('먼저 허블 사진이 완전히 로딩되어야 해요.',true);
+    return;
+  }
+  const button=$('#print-send');
+  printBusy=true;button.disabled=true;$('#print-cancel').disabled=true;
+  let submitted=false;
   try{
     printMessage('포토카드를 준비하는 중…');
     const sb=await getPrintClient();
-    const {data:{user:existing}}=await sb.auth.getUser();
-    let uid=existing?.is_anonymous===true?existing.id:null;
+    const {data:{user:existing},error:userError}=await sb.auth.getUser();
+    let uid=!userError&&existing?.is_anonymous===true?existing.id:null;
     if(!uid){
-      printMessage('비공개 접수 인증 중…');
+      printMessage('비공개 접수 연결 중…');
       const {data,error}=await sb.auth.signInAnonymously();
       if(error)throw error;
-      uid=data.user.id;
+      uid=data?.user?.id;
     }
-    await ensureFontsLoaded();
-    await document.fonts.ready;
-    const c=document.createElement('canvas');
-    cardDraw(c,true,2); // print-quality 1080 x 1720 for default 54 x 86 mm
-    const png=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('PNG 생성에 실패했어요.')),'image/png'));
-    if(png.size>10485760)throw Error('인쇄 이미지가 10MB를 초과했어요. 추가한 사진 크기를 줄여주세요.');
-    if(png.size<1024)throw Error('이미지가 비어 있어요. 다시 만들어 주세요.');
+    if(!uid)throw Error('인쇄 접수 세션을 만들지 못했어요.');
+    const png=await exportCardBlob(2); // 1080 x 1720 px for basic 54 x 86 mm card
+    if(png.size>10485760)throw Error('인쇄 이미지가 10MB를 초과했어요. 사진 크기를 줄여주세요.');
+    if(png.size<1024)throw Error('PNG 데이터가 비어 있어요.');
     const path=uid+'/'+crypto.randomUUID()+'.png';
-    printMessage('인쇄 담당자에게 비공개 사진 전송 중…');
-    const upload=await sb.storage.from('print-cards').upload(path,png,{
+    printMessage('사진을 인쇄 담당자에게 전송 중…');
+    const {error:uploadError}=await sb.storage.from('print-cards').upload(path,png,{
       contentType:'image/png',upsert:false,cacheControl:'0'
     });
-    if(upload.error)throw upload.error;
-    printMessage('인쇄 접수 기록 저장 중…');
-    const result=await sb.rpc('submit_print_order',{
+    if(uploadError)throw uploadError;
+    printMessage('학번·이름과 인쇄 접수를 등록하는 중…');
+    const {data:orderId,error:orderError}=await sb.rpc('submit_print_order_with_student',{
       p_file_path:path,
-      p_nickname:nickname,
+      p_student_number:studentNumber,
+      p_student_name:studentName,
       p_month:state.month,
       p_day:state.day,
       p_ratio:state.ratio
     });
-    if(result.error)throw result.error;
-    if(!result.data)throw Error('접수 번호가 반환되지 않았어요.');
-    $('#print-dialog').close();
+    if(orderError)throw orderError;
+    if(!orderId)throw Error('접수 번호를 받지 못했어요.');
+    submitted=true;
+    $('#print-fields').hidden=true;
+    $('#print-success').hidden=false;
+    $('#print-receipt').textContent='학번 '+studentNumber+' · 이름 '+studentName+' · 접수번호 '+String(orderId).slice(0,8);
     $('#print-agree').checked=false;
-    alert('✅ 인쇄 접수가 완료됐어요!\n접수 이름: '+nickname+'\n접수 번호: '+String(result.data).slice(0,8)+'\n인쇄 담당자가 관리자 화면에서 PNG를 확인할 수 있어요.');
-    $('#promo-dialog').showModal();
+    $('#print-student-number').value='';
+    $('#print-student-name').value='';
+    if(printDownloadUrl)URL.revokeObjectURL(printDownloadUrl);
+    printDownloadUrl=URL.createObjectURL(png);
+    printDownloadName=cardFileName(studentNumber+'-'+studentName);
+    try{
+      clickToDownload(printDownloadUrl,printDownloadName);
+      $('#print-success-note').textContent='인쇄 요청이 접수됐고, 포토카드 PNG 저장을 시작했어요. 다운로드가 보이지 않으면 아래 버튼을 눌러 주세요.';
+    }catch(e){
+      $('#print-success-note').textContent='인쇄 접수는 완료됐어요. 아래 PNG 저장 버튼을 눌러 사진도 저장해 주세요.';
+    }
   }catch(e){
-    printMessage('접수 실패: '+(e instanceof Error?e.message:'연결 오류')+'\n접수 완료 안내가 나타나지 않았다면 사진이 전송됐다고 판단하지 마세요.',true);
-  }finally{btn.disabled=false;}
+    if(!submitted)printMessage('인쇄 접수 실패: '+(e instanceof Error?e.message:'연결 오류')+'\n접수 완료 화면이 나타나지 않았다면 다시 확인해 주세요.',true);
+  }finally{
+    printBusy=false;button.disabled=false;$('#print-cancel').disabled=false;
+  }
 };
 
 $('#close-promo').onclick = reset;
