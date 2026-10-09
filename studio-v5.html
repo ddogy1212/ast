@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-v5" />
+<meta name="orbit-build" content="20261009-v5.1" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -132,11 +132,15 @@
  .mobile-photo-btn.active {border-color:#d4c6ff;background:#474e78;box-shadow:0 0 0 2px #a29bff55;}
 }
 
+/* Birthday landing footer credit */
+.creator-credit{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);font-size:16px;font-weight:600;letter-spacing:.05em;color:#ded9ff;text-align:center;z-index:2}
+@media(max-width:680px){.creator-credit{font-size:14px;bottom:20px;}}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v5.0</span></header>
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v5.1</span></header>
 <main id="home" class="home">
  <div class="hero-copy">
   <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
@@ -144,11 +148,12 @@
   <p>당신의 생일에 허블 우주망원경이 관측한 우주를 만나보세요.<br/>그날의 별빛을 세상에 하나뿐인 포토카드로 간직해요.</p>
   <section class="birthday-box"><h2><span class="step">01</span> 언제 태어났나요?</h2><p>태어난 <b>월과 일</b>을 선택하면 NASA 아카이브에서 글자 없는 은하·성운·행성 사진을 찾아드려요.</p>
    <div class="date-fields"><label>MONTH · 월<select id="month"></select></label><label>DAY · 일<select id="day"></select></label></div>
-   <button class="primary full" id="start">내 생일의 우주 만나기 →</button><p id="home-error" class="error"></p><small>✦ 출생 연도가 아닌 월·일 기준입니다. 사진의 관측 연도는 따로 표시해요.</small>
+   <button class="primary full" id="start">내 생일의 우주 만나기 →</button><p id="home-error" class="error"></p>
   </section>
   <div class="benefits">✓ 공식 NASA 자료 <span>✓ 무료 PNG 저장</span><span>✓ 사진 누끼·꾸미기</span></div>
  </div>
  <div class="hero-visual"><div class="halo"></div><div class="hero-card"><img src="https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/july-19-2002-ngc300.jpg" alt="허블 관측 사진 예시"/></div></div>
+<div class="creator-credit">- 모든것은 "윤현"이 제작함</div>
 </main>
 <main id="studio" class="studio hidden">
  <aside class="left panel">
@@ -257,7 +262,7 @@ const ratios = {
 };
 const colors = ['#ffffff', '#ded1ff', '#ffcfdf', '#ffdf94', '#b6edfa', '#1c2035'];
 const stickerSymbols = ['✦','☾','☆','♡','🪐','✨','🌙','💜','🎀','🦋','⭐','☁️','🌸','🧸','💫','♥'];
-const state = { month: 7, day: 19, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
+const state = { month: 2, day: 12, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
 const NASA_IMAGE_BASE = 'https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/';
 let birthdayArchivePromise = null;
 async function getBirthdayArchive() {
@@ -330,7 +335,7 @@ const el = (tag, attrs = {}, text) => { const node = document.createElement(tag)
 function initDate() {
   const month = $('#month'), day = $('#day');
   for (let m = 1; m <= 12; m++) month.add(new Option(m + '월', String(m)));
-  month.value = '7';
+  month.value = '2';
   const updateDays = () => {
     state.month = Number(month.value);
     const count = new Date(2024, state.month, 0).getDate();
@@ -340,7 +345,7 @@ function initDate() {
     day.value = String(old); state.day = old;
   };
   month.addEventListener('change', updateDays); day.addEventListener('change', () => state.day = Number(day.value));
-  updateDays(); day.value = '19'; state.day = 19;
+  updateDays(); day.value = '12'; state.day = 12;
 }
 async function start() {
   if (state.busy) return;
