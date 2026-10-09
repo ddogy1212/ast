@@ -115,6 +115,74 @@ function initDate() {
   month.addEventListener('change', updateDays); day.addEventListener('change', () => state.day = Number(day.value));
   updateDays(); day.value = '12'; state.day = 12;
 }
+// Mobile photo-first workflow. The picker never touches layers, text, cutouts,
+// positions, rotations, ratios or history; changing a photo updates only the background.
+let hasEnteredStudio=false;
+function usesMobilePhotoPicker(){return window.matchMedia('(max-width: 680px)').matches;}
+function renderPhotoPicker(){
+  const list=$('#gallery-grid');
+  if(!list)return;
+  list.replaceChildren();
+  state.photos.forEach((photo,i)=>{
+    const desc=summarizeHubblePhoto(photo);
+    const button=el('button',{
+      type:'button',
+      class:'gallery-photo-card'+(hasEnteredStudio&&state.photo===i?' current':''),
+      'aria-label':(i+1)+'번 허블 사진 선택 · '+photo.name
+    });
+    const media=el('div',{class:'gallery-photo-image'});
+    const img=el('img',{src:photo.image,alt:photo.name,loading:i<2?'eager':'lazy'});
+    media.append(img);
+    const number=el('span',{class:'gallery-photo-number'},String(i+1).padStart(2,'0'));
+    media.append(number);
+    if(hasEnteredStudio&&state.photo===i)media.append(el('span',{class:'gallery-current'},'현재 배경 ✓'));
+    const details=el('div',{class:'gallery-photo-text'});
+    details.append(
+      el('strong',{},desc.title),
+      el('small',{},photo.name),
+      el('span',{class:'gallery-observed'},photo.observedYear?'허블 관측 · '+photo.observedYear+'년':'허블 관측 사진'),
+      el('span',{class:'gallery-card-cta'},hasEnteredStudio?'이 사진으로 교체하기 →':'이 사진으로 꾸미기 →')
+    );
+    button.append(media,details);
+    button.onclick=()=>enterStudioWithPhoto(i);
+    list.append(button);
+  });
+  $('#gallery-back').textContent=hasEnteredStudio?'← 편집 화면으로 돌아가기':'← 생일 다시 선택';
+  $('#gallery-tip').textContent=hasEnteredStudio?'사진만 바뀌고, 작성한 글자·누끼 사진·스티커와 편집 위치는 그대로 유지돼요.':'마음에 드는 우주 사진을 누르면 편집 화면으로 이동해요.';
+  $('#gallery-birthday').textContent=state.month+'월 '+state.day+'일';
+}
+function showPhotoPicker(){
+  if(!state.photos.length)return;
+  $('#home').classList.add('hidden');
+  $('#studio').classList.add('hidden');
+  $('#photo-picker').classList.remove('hidden');
+  renderPhotoPicker();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function enterStudioWithPhoto(index){
+  if(!state.photos[index])return;
+  // Do NOT reinitialize state.layers, state.ratio, state.style or undoStack.
+  $('#photo-picker').classList.add('hidden');
+  $('#home').classList.add('hidden');
+  $('#studio').classList.remove('hidden');
+  hasEnteredStudio=true;
+  choosePhoto(index);
+  showStatus('선택한 우주 배경을 적용했어요. 글자와 사진은 그대로 유지돼요.');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function returnFromPhotoPicker(){
+  $('#photo-picker').classList.add('hidden');
+  if(hasEnteredStudio){
+    $('#studio').classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'instant'});
+  }else{
+    $('#home').classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'instant'});
+  }
+}
+$('#open-photo-picker').onclick=showPhotoPicker;
+$('#gallery-back').onclick=returnFromPhotoPicker;
+
 async function start() {
   if (state.busy) return;
   error('', false); state.busy = true;
@@ -124,18 +192,24 @@ async function start() {
     const photos = getBirthdayPhotos(archive, state.month, state.day);
     if (!photos.length) throw Error('선택한 날짜의 허블 자료에는 은하·성운·행성 사진이 없어요. 다른 날짜를 선택해 주세요.');
     state.photos = photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean'; undoStack=[]; redoStack=[]; updateHistoryButtons();
-    $('#home').classList.add('hidden'); $('#studio').classList.remove('hidden');
+    $('#home').classList.add('hidden'); $('#studio').classList.add('hidden'); $('#photo-picker').classList.add('hidden');
+    hasEnteredStudio=false;state.bg=null;
     $('#birthday-label').textContent = state.month + '월 ' + state.day + '일';
     $('#clear-layers').disabled = false;
-    renderRatios(); renderPhotos(); updateSelection(); choosePhoto(0); window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderRatios();renderPhotos();updateSelection();
+    if(usesMobilePhotoPicker()){
+      showPhotoPicker();
+    }else{
+      enterStudioWithPhoto(0);
+    }
   } catch (e) { error(e.message || '연결 오류', false); }
   finally { state.busy = false; $('#start').disabled = false; $('#start').textContent = '내 생일의 우주 만나기 →'; }
 }
 function reset() {
   if ($('#promo-dialog').open) $('#promo-dialog').close();
   if ($('#cutout-dialog').open) $('#cutout-dialog').close();
-  state.photos = []; state.layers = []; state.selected = null; state.bg = null; state.photo = 0; state.imageRequest++; undoStack=[];redoStack=[];alignmentGuides=null;dragSession=null;updateHistoryButtons();
-  $('#home').classList.remove('hidden'); $('#studio').classList.add('hidden');
+  state.photos = []; state.layers = []; state.selected = null; state.bg = null; state.photo = 0; state.imageRequest++; undoStack=[];redoStack=[];alignmentGuides=null;dragSession=null;hasEnteredStudio=false;updateHistoryButtons();
+  $('#home').classList.remove('hidden'); $('#studio').classList.add('hidden'); $('#photo-picker').classList.add('hidden');
   error(''); error('', false); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function renderPhotos() {
@@ -161,6 +235,7 @@ function renderPhotos() {
 }
 function choosePhoto(i) {
   state.photo = i; renderPhotos(); error('');
+  // Only the NASA background is changed. User-added canvas layers are preserved.
   const p = state.photos[i]; if (!p) return;
   const box = $('#nasa-info'); box.replaceChildren();
   const summary=summarizeHubblePhoto(p);
