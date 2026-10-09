@@ -314,3 +314,23 @@
   .nasa-info .nasa-ko-description {font-size:13px;line-height:2}
   .nasa-info .nasa-copy-button {min-height:44px}
 }
+
+
+/* Real NASA article-backed object identity and rich observation detail */
+.nasa-info{padding:20px 17px;background:linear-gradient(155deg,#233352,#16233d);border:1px solid #5b6686;border-radius:17px;margin-bottom:24px}
+.nasa-info .nasa-subheading{display:block;color:#bfb5ff;font-size:10px;letter-spacing:.025em;font-weight:800;margin-bottom:9px}
+.nasa-info .nasa-object-name{display:block;color:#fff;font-size:17px;font-weight:850;line-height:1.55;letter-spacing:-.04em;word-break:keep-all}
+.nasa-info .nasa-scientific-name{margin:7px 0 18px;color:#aebad0;font-size:10px;line-height:1.7;overflow-wrap:anywhere}
+.nasa-info .nasa-section-title{display:block;font-size:12px;font-weight:800;color:#f4edff;line-height:1.65;margin:12px 0 7px}
+.nasa-info .nasa-ko-description{font-size:12px;line-height:1.9;color:#d7dff0;max-height:none;overflow:visible;margin:4px 0 14px;user-select:text;-webkit-user-select:text;word-break:keep-all}
+.nasa-info .nasa-fact-title{padding-top:14px;border-top:1px solid #4b5474;margin-top:14px}
+.nasa-info .nasa-source-description{white-space:pre-line;word-break:keep-all;color:#d7e6ed;line-height:1.9;font-size:12px;max-height:370px;overflow-y:auto;scrollbar-color:#8587b9 transparent;padding:4px 0 6px;user-select:text;-webkit-user-select:text}
+.nasa-info .nasa-info-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:17px}
+.nasa-info .nasa-info-actions .nasa-copy-button{min-height:41px;font-size:12px;padding:9px 14px;font-weight:800}
+.nasa-info .nasa-ko-note{margin-top:10px;font-size:10px;color:#98a7c0;line-height:1.65;display:block}
+@media(max-width:680px){
+ .nasa-info .nasa-object-name{font-size:18px}
+ .nasa-info .nasa-source-description{max-height:none;overflow:visible;font-size:13px;line-height:1.95}
+ .nasa-info .nasa-ko-description{font-size:13px}
+ .nasa-info .nasa-info-actions .nasa-copy-button{min-height:47px}
+}
