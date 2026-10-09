@@ -31,3 +31,13 @@ Supabase official docs:
 https://supabase.com/docs/guides/auth/auth-anonymous
 https://supabase.com/docs/guides/storage/security/access-control
 https://supabase.com/docs/guides/auth/auth-email-passwordless
+
+
+## 변경: 친구 관리자 전용 링크 — 이메일 로그인 없음 (2026-10-09)
+- `admin.html#key=<64자리-랜덤-값>` 주소를 친구에게 전달하면 로그인 화면 없이 바로 관리자 목록을 표시합니다.
+- **중요:** 전용 랜덤 값은 GitHub에 커밋하지 않습니다. Supabase `print_admin_links`에는 SHA-256 해시만 저장합니다.
+- 브라우저는 화면에 보이지 않는 Supabase 익명 세션을 생성해 Edge Function `print-admin-api`에 요청하며, 함수가 관리자 링크 값을 서버에서 확인한 뒤 목록 및 2분짜리 비공개 이미지 링크를 발급합니다.
+- 비공개 Storage 버킷 및 주문 RLS 정책은 그대로 유지합니다. 관리자 API에는 `verify_jwt=true`가 설정되어 있습니다.
+- **서버 설정:** Supabase Authentication > Providers에서 **Anonymous Sign-Ins**가 활성화되어야 참여자 및 관리자 링크 브라우저에서 자동 세션을 생성할 수 있습니다. 이메일 로그인이나 리디렉션 설정은 필요하지 않습니다.
+- 친구가 전용 링크를 타인에게 전달하면 그 사람도 관리자 화면에 접근할 수 있습니다. 노출되면 `print_admin_links.enabled=false`로 폐기하고 새 링크를 발행하세요.
+- 테스트 접수, 사진 PNG 미리보기/다운로드, 인쇄 상태 변경, 삭제를 실제 서로 다른 모바일/PC 브라우저에서 확인해야 합니다.
