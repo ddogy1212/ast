@@ -11,8 +11,26 @@ const ratios = {
   story: { w: 540, h: 960, label: '스토리 · 9:16' }
 };
 const colors = ['#ffffff', '#ded1ff', '#ffcfdf', '#ffdf94', '#b6edfa', '#1c2035'];
+const fontOptions = [
+  {id:'sans',name:'깔끔체',family:'Noto Sans KR',weight:700},
+  {id:'round',name:'둥근체',family:'Jua',weight:400},
+  {id:'soft',name:'감성체',family:'Gowun Dodum',weight:400},
+  {id:'hand',name:'손글씨',family:'Nanum Pen Script',weight:400},
+  {id:'serif',name:'명조체',family:'Noto Serif KR',weight:600},
+  {id:'bold',name:'포스터체',family:'Black Han Sans',weight:400},
+  {id:'cute',name:'귀여운 글씨',family:'Gamja Flower',weight:400}
+];
+function getFont(id){return fontOptions.find(x=>x.id===id)||fontOptions[0];}
+async function ensureFontsLoaded(){
+  const fonts=[...new Set(state.layers.filter(l=>l.kind==='text').map(l=>l.font||'sans'))];
+  await Promise.all(fonts.map(id=>{
+    const f=getFont(id);
+    return document.fonts.load(f.weight+' 46px "'+f.family+'"','김나예 사랑해 123 ABC').catch(()=>[]);
+  }));
+  render();
+}
 const stickerSymbols = ['✦','☾','☆','♡','🪐','✨','🌙','💜','🎀','🦋','⭐','☁️','🌸','🧸','💫','♥'];
-const state = { month: 2, day: 12, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
+const state = { month: 2, day: 12, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', newFont: 'sans', busy: false, imageRequest: 0, mode: 'erase' };
 const NASA_IMAGE_BASE = 'https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/';
 let birthdayArchivePromise = null;
 async function getBirthdayArchive() {
@@ -194,7 +212,8 @@ function cardDraw(canvas, exportMode = false) {
       ctx.drawImage(img, -bw / 2, -bh / 2, bw, bh);
     } else if (item.kind === 'text') {
       const size = 46 * item.scale;
-      ctx.font = '700 ' + size + 'px "Noto Sans KR", sans-serif'; ctx.fillStyle = item.color || '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const chosenFont=getFont(item.font||'sans');
+      ctx.font = chosenFont.weight+' '+size+'px "'+chosenFont.family+'", "Noto Sans KR", sans-serif'; ctx.fillStyle = item.color || '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.shadowColor = '#0009'; ctx.shadowBlur = 7; ctx.fillText(item.text || 'My universe', 0, 0, w * .83); ctx.shadowBlur = 0;
       bw = Math.min(ctx.measureText(item.text || 'My universe').width, w * .83); bh = size * 1.3;
     } else if (item.kind === 'sticker') {
@@ -238,17 +257,20 @@ function updateSelection(){
   $('#no-layer').classList.toggle('hidden',yes);
   $('#quick-actions').classList.toggle('hidden',!yes);
   $('#open-cut').disabled=!yes||active.kind!=='photo';
-  $('#text-edit-controls').classList.toggle('hidden',!yes||active.kind!=='text');
   $('#selected-name').textContent=yes?layerName(active):'요소를 선택해 주세요';
   if(active){
     $('#scale').value=active.scale;$('#angle').value=active.angle;
     $('#scale-num').textContent=Math.round(active.scale*100)+'%';
     $('#angle-num').textContent=active.angle+'°';
     if(active.kind==='text'){
-      $('#edit-text').value=active.text||'';
-      $('#selected-custom-color').value=/^#[\da-fA-F]{6}$/.test(active.color||'')?active.color:'#ffffff';
-      paintPalette('#edit-colors',active.color,(c)=>{checkpoint();active.color=c;updateSelection();});
-    }
+      setTab('text');
+      state.newColor=active.color||'#ffffff';
+      state.newFont=active.font||'sans';
+      $('#text-input').value=active.text||'';
+    }else if(active.kind==='photo')setTab('photo');
+    renderTextStyleControls();
+  }else{
+    renderTextStyleControls();
   }
   updateLayerList();updateHistoryButtons();render();
 }
@@ -359,6 +381,33 @@ function paintPalette(selector,chosen,callback){
     b.style.background=c;b.onclick=()=>callback(c);node.append(b);
   });
 }
+function renderFontChoices(){
+  const node=$('#font-list');node.replaceChildren();
+  fontOptions.forEach(f=>{
+    const b=el('button',{type:'button',class:'font-choice'+(state.newFont===f.id?' active':''),'aria-label':f.name+' 글꼴','aria-pressed':String(state.newFont===f.id)});
+    b.style.fontFamily='"'+f.family+'", "Noto Sans KR", sans-serif';
+    b.append(el('strong',{},'가나다'),el('small',{},f.name));
+    b.onclick=()=>{
+      const a=activeLayer();
+      if(a?.kind==='text'){if(a.font!==f.id){checkpoint();a.font=f.id;}}
+      state.newFont=f.id;renderTextStyleControls();render();
+      document.fonts.load(f.weight+' 46px "'+f.family+'"','한글 가나다 ABC').then(()=>render()).catch(()=>{});
+    };
+    node.append(b);
+  });
+}
+function renderTextStyleControls(){
+  const active=activeLayer(),editing=active?.kind==='text';
+  $('#text-mode-note').textContent=editing?'선택한 글자를 바로 수정하고 있어요':'새 글자에 적용할 스타일을 골라주세요';
+  $('#add-text').textContent=editing?'＋ 새 글자 추가':'＋ 글자 추가';
+  $('#new-custom-color').value=state.newColor;
+  paintPalette('#new-colors',state.newColor,c=>{
+    const a=activeLayer();
+    if(a?.kind==='text'){checkpoint();a.color=c;}
+    state.newColor=c;renderTextStyleControls();render();
+  });
+  renderFontChoices();
+}
 function setTab(tab){
   state.tab=tab;
   $$('.tabs button').forEach(b=>{
@@ -368,7 +417,17 @@ function setTab(tab){
   ['text','photo','sticker'].forEach(t=>$('#tab-'+t).classList.toggle('hidden',t!==tab));
 }
 $$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-$('#add-text').onclick=()=>{addLayer({kind:'text',text:$('#text-input').value||'My universe',color:state.newColor,scale:1,y:.35});$('#edit-text').focus();};
+$('#text-input').addEventListener('focus',()=>{
+  if(activeLayer()?.kind==='text')checkpoint();
+});
+$('#text-input').addEventListener('input',e=>{
+  const a=activeLayer();
+  if(a?.kind==='text'){a.text=e.target.value;render();}
+});
+$('#add-text').onclick=()=>{
+  addLayer({kind:'text',text:$('#text-input').value||'My universe',color:state.newColor,font:state.newFont,scale:1,y:.35});
+  showStatus('글자가 추가됐어요. 움직이려면 카드 위 글자를 드래그하세요.');
+};
 $('#stickers').replaceChildren(...stickerSymbols.map(symbol=>{
   const b=el('button',{title:symbol,'aria-label':'스티커 '+symbol},symbol);
   b.onclick=()=>addLayer({kind:'sticker',text:symbol,x:.5,y:.5});
@@ -391,10 +450,15 @@ $('#scale').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp
 $('#angle').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))checkpoint();});
 $('#scale').oninput=e=>{const l=activeLayer();if(!l)return;l.scale=Number(e.target.value);$('#scale-num').textContent=Math.round(l.scale*100)+'%';render();};
 $('#angle').oninput=e=>{const l=activeLayer();if(!l)return;l.angle=Number(e.target.value);$('#angle-num').textContent=l.angle+'°';render();};
-$('#edit-text').addEventListener('focus',()=>{if(activeLayer()?.kind==='text')checkpoint();});
-$('#edit-text').oninput=e=>{const l=activeLayer();if(l?.kind==='text'){l.text=e.target.value;updateLayerList();render();}};
-$('#new-custom-color').onchange=e=>{state.newColor=e.target.value;renderNewPalette();};
-$('#selected-custom-color').onchange=e=>{const l=activeLayer();if(l?.kind==='text'){checkpoint();l.color=e.target.value;updateSelection();}};
+$('#new-custom-color').addEventListener('input',e=>{
+  const a=activeLayer();
+  if(a?.kind==='text')a.color=e.target.value;
+  state.newColor=e.target.value;
+  renderTextStyleControls();render();
+});
+$('#new-custom-color').addEventListener('change',()=>{
+  const a=activeLayer();if(a?.kind==='text')showStatus('글자 색을 변경했어요');
+});
 $('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
 $('#delete-quick').onclick=removeSelected;
 $('#duplicate-quick').onclick=duplicateSelected;
@@ -531,6 +595,7 @@ $('#save').onclick = async () => {
   error('');
   if (state.photos.length && !state.bg) { error('먼저 NASA 사진이 완전히 로딩됐는지 확인해 주세요.'); return; }
   try {
+    await ensureFontsLoaded();
     await document.fonts.ready;
     const output = document.createElement('canvas'); cardDraw(output, true);
     const data = output.toDataURL('image/png');
@@ -546,7 +611,6 @@ $('#brand').onclick = reset;
 $('#change-date').onclick = reset;
 $('#start').onclick = start;
 
-function renderNewPalette() { paintPalette('#new-colors', state.newColor, (c) => { state.newColor = c; $('#new-custom-color').value = c; renderNewPalette(); }); }
-renderNewPalette();
+renderTextStyleControls();
 updateHistoryButtons();
 initDate();
