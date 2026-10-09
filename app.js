@@ -372,7 +372,7 @@ card.addEventListener('pointerup',finishDrag);
 card.addEventListener('pointercancel',finishDrag);
 card.addEventListener('lostpointercapture',finishDrag);
 card.addEventListener('dblclick',()=>{
- const l=activeLayer();if(l?.kind==='text'){$('#edit-text').focus();$('#edit-text').select();}
+ const l=activeLayer();if(l?.kind==='text'){$('#text-input').focus();$('#text-input').select();}
 });
 function paintPalette(selector,chosen,callback){
   const node=$(selector);node.replaceChildren();
