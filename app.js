@@ -12,7 +12,7 @@ const ratios = {
 };
 const colors = ['#ffffff', '#ded1ff', '#ffcfdf', '#ffdf94', '#b6edfa', '#1c2035'];
 const stickerSymbols = ['✦','☾','☆','♡','🪐','✨','🌙','💜','🎀','🦋','⭐','☁️','🌸','🧸','💫','♥'];
-const state = { month: 7, day: 19, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
+const state = { month: 2, day: 12, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
 const NASA_IMAGE_BASE = 'https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/';
 let birthdayArchivePromise = null;
 async function getBirthdayArchive() {
@@ -85,7 +85,7 @@ const el = (tag, attrs = {}, text) => { const node = document.createElement(tag)
 function initDate() {
   const month = $('#month'), day = $('#day');
   for (let m = 1; m <= 12; m++) month.add(new Option(m + '월', String(m)));
-  month.value = '7';
+  month.value = '2';
   const updateDays = () => {
     state.month = Number(month.value);
     const count = new Date(2024, state.month, 0).getDate();
@@ -95,7 +95,7 @@ function initDate() {
     day.value = String(old); state.day = old;
   };
   month.addEventListener('change', updateDays); day.addEventListener('change', () => state.day = Number(day.value));
-  updateDays(); day.value = '19'; state.day = 19;
+  updateDays(); day.value = '12'; state.day = 12;
 }
 async function start() {
   if (state.busy) return;
