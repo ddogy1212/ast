@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-v2.2" />
+<meta name="orbit-build" content="20261009-v2.3" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -18,7 +18,7 @@
 </head>
 <body>
 <div id="app">
-<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v2.2</span></header>
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v2.3</span></header>
 <main id="home" class="home">
  <div class="hero-copy">
   <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
@@ -70,7 +70,7 @@
  * No photo data, text, or birthday is transmitted except the month/day NASA lookup.
  */
 const $ = (q) => document.querySelector(q);
-const $ = (q) => [...document.querySelectorAll(q)];
+const $$ = (q) => [...document.querySelectorAll(q)];
 const ratios = {
   photocard: { w: 540, h: 860, label: '포토카드 · 54 × 86 mm' },
   square: { w: 640, h: 640, label: '정사각형 · 1:1' },
@@ -286,10 +286,10 @@ function paintPalette(selector, chosen, callback) {
 }
 function setTab(tab) {
   state.tab = tab;
-  $('.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+  $$('.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
   ['text', 'photo', 'sticker'].forEach((t) => $('#tab-' + t).classList.toggle('hidden', t !== tab));
 }
-$('.tabs button').forEach((button) => button.onclick = () => setTab(button.dataset.tab));
+$$('.tabs button').forEach((button) => button.onclick = () => setTab(button.dataset.tab));
 $('#add-text').onclick = () => addLayer({ kind: 'text', text: $('#text-input').value || 'My universe', color: state.newColor, scale: 1, y: .48 });
 $('#stickers').replaceChildren(...stickerSymbols.map((symbol) => {
   const b = el('button', { title: symbol, 'aria-label': '스티커 ' + symbol }, symbol);
@@ -310,7 +310,7 @@ $('#edit-text').oninput = (e) => { const a = activeLayer(); if (a?.kind === 'tex
 $('#delete-layer').onclick = () => { state.layers = state.layers.filter((l) => l.id !== state.selected); state.selected = null; updateSelection(); };
 $('#clear-select').onclick = () => { state.selected = null; updateSelection(); };
 $('#clear-layers').onclick = () => { state.layers = []; state.selected = null; updateSelection(); };
-$('.style-options button').forEach((b) => b.onclick = () => { state.style = b.dataset.style; $('.style-options button').forEach((x) => x.classList.toggle('active', x === b)); render(); });
+$$('.style-options button').forEach((b) => b.onclick = () => { state.style = b.dataset.style; $$('.style-options button').forEach((x) => x.classList.toggle('active', x === b)); render(); });
 function openCutout() {
   const item = activeLayer(); if (!item || item.kind !== 'photo' || !item.image) return;
   const image = item.image, scale = Math.min(1, 700 / Math.max(image.naturalWidth, image.naturalHeight));
