@@ -45,7 +45,7 @@ function getBirthdayPhotos(archive, month, day) {
   return scored.slice(0, 5);
 }
 const card = $('#card'), cutCanvas = $('#cut-canvas');
-let dragSession = null, alignmentGuides = null, painting = false, basePixels = null;
+let dragSession = null, alignmentGuides = null, painting = false, basePixels = null, cutBusy = false;
 let undoStack = [], redoStack = [];
 const MAX_HISTORY = 35;
 function checkpoint() {
@@ -228,16 +228,7 @@ function render() {
 function layerName(l) {
   return l.kind==='photo'?'📷 업로드한 사진':l.kind==='sticker'?'✦ 스티커 '+(l.text||''): 'T '+(l.text||'텍스트').slice(0,23);
 }
-function updateLayerList(){
-  const list=$('#layer-list');list.replaceChildren();
-  if(!state.layers.length){list.append(el('p',{class:'layer-empty'},'아직 추가한 요소가 없어요.'));return;}
-  [...state.layers].reverse().forEach(item=>{
-    const b=el('button',{type:'button',class:'layer-entry'+(item.id===state.selected?' active':''),'aria-pressed':String(item.id===state.selected)});
-    b.append(el('span',{class:'layer-entry-icon'},item.kind==='photo'?'▧':item.kind==='text'?'T':'✦'),el('span',{},layerName(item)));
-    b.onclick=()=>{state.selected=item.id;updateSelection();};
-    list.append(b);
-  });
-}
+function updateLayerList(){ /* 레이어 목록 대신 카드에서 바로 선택 */ }
 function syncFrameButtons(){
   $$('.style-options button').forEach(b=>b.classList.toggle('active',b.dataset.style===state.style));
 }
@@ -246,8 +237,6 @@ function updateSelection(){
   $('#layer-controls').classList.toggle('hidden',!yes);
   $('#no-layer').classList.toggle('hidden',yes);
   $('#quick-actions').classList.toggle('hidden',!yes);
-  $('#delete-layer').disabled=!yes;
-  $('#duplicate-layer').disabled=!yes;
   $('#open-cut').disabled=!yes||active.kind!=='photo';
   $('#text-edit-controls').classList.toggle('hidden',!yes||active.kind!=='text');
   $('#selected-name').textContent=yes?layerName(active):'요소를 선택해 주세요';
@@ -321,7 +310,6 @@ function snapValue(value,positions,threshold) {
 function getSnappedPoint(item, x, y) {
   const b=card.getBoundingClientRect();
   x=Math.max(0.01,Math.min(.99,x));y=Math.max(.01,Math.min(.99,y));
-  if(!$('#snap-toggle').checked)return {x,y,guides:null};
   const other=state.layers.filter(l=>l.id!==item.id);
   const tx=[.5,.15,.85,...other.map(l=>l.x)];
   const ty=[.5,.15,.85,...other.map(l=>l.y)];
@@ -408,18 +396,18 @@ $('#edit-text').oninput=e=>{const l=activeLayer();if(l?.kind==='text'){l.text=e.
 $('#new-custom-color').onchange=e=>{state.newColor=e.target.value;renderNewPalette();};
 $('#selected-custom-color').onchange=e=>{const l=activeLayer();if(l?.kind==='text'){checkpoint();l.color=e.target.value;updateSelection();}};
 $('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
-$('#delete-layer').onclick=removeSelected;$('#delete-quick').onclick=removeSelected;
-$('#duplicate-layer').onclick=duplicateSelected;$('#duplicate-quick').onclick=duplicateSelected;
+$('#delete-quick').onclick=removeSelected;
+$('#duplicate-quick').onclick=duplicateSelected;
 $('#center-quick').onclick=()=>centerSelected('both');
-$('#center-nudge').onclick=()=>centerSelected('both');
-$('#center-x').onclick=()=>centerSelected('x');
-$('#center-y').onclick=()=>centerSelected('y');
-$('#front-layer').onclick=()=>reorderSelected(1);
-$('#back-layer').onclick=()=>reorderSelected(-1);
-$('#move-left').onclick=()=>shiftSelected(-10,0);
-$('#move-right').onclick=()=>shiftSelected(10,0);
-$('#move-up').onclick=()=>shiftSelected(0,-10);
-$('#move-down').onclick=()=>shiftSelected(0,10);
+
+
+
+
+
+
+
+
+
 $('#clear-select').onclick=()=>{state.selected=null;updateSelection();};
 $('#clear-layers').onclick=()=>{
  if(!state.layers.length)return;
@@ -443,62 +431,79 @@ document.addEventListener('keydown',e=>{
 });
 function openCutout() {
   const item = activeLayer(); if (!item || item.kind !== 'photo' || !item.image) return;
-  const image = item.image, scale = Math.min(1, 700 / Math.max(image.naturalWidth, image.naturalHeight));
+  const image = item.image, scale = Math.min(1, 1700 / Math.max(image.naturalWidth, image.naturalHeight));
   cutCanvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
   cutCanvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
   const context = cutCanvas.getContext('2d', { willReadFrequently: true });
   context.clearRect(0, 0, cutCanvas.width, cutCanvas.height);
   context.drawImage(image, 0, 0, cutCanvas.width, cutCanvas.height);
   basePixels = context.getImageData(0, 0, cutCanvas.width, cutCanvas.height);
-  setCutMode('erase'); $('#cutout-dialog').showModal();
+  cutBusy=false;setCutMode('erase');$('#auto-cut').textContent='✨ AI 자동 누끼';$('#cut-status').textContent='✨ AI 누끼를 누르면 사람·사물의 윤곽을 인식해 배경을 제거해요.';$('#cutout-dialog').showModal();
 }
 function setCutMode(mode) {
   state.mode = mode;
   $('#erase-mode').className = mode === 'erase' ? 'primary' : 'secondary';
   $('#restore-mode').className = mode === 'restore' ? 'primary' : 'secondary';
 }
-function autoCut() {
-  if (!basePixels) return;
-  const ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
-  const im = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = im.data;
-  const original = basePixels.data, w = im.width, h = im.height;
-  const tolerance = Number($('#tolerance').value);
-  const corners = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]].map(([x, y]) => {
-    const i = (y * w + x) * 4; return [original[i], original[i + 1], original[i + 2]];
-  });
-  const visited = new Uint8Array(w * h), queue = new Int32Array(w * h);
-  let head = 0, tail = 0;
-  function visit(index) {
-    if (index < 0 || index >= w * h || visited[index]) return;
-    visited[index] = 1;
-    const i = index * 4;
-    if (original[i + 3] < 10) return;
-    const ok = corners.some(([r, g, b]) => Math.hypot(original[i] - r, original[i + 1] - g, original[i + 2] - b) < tolerance);
-    if (ok) queue[tail++] = index;
+async function autoCut() {
+  if(!basePixels||cutBusy)return;
+  cutBusy=true;
+  const startId=state.selected;
+  const button=$('#auto-cut'),status=$('#cut-status');
+  button.disabled=true;button.textContent='⏳ AI 누끼 처리 중…';
+  $('#apply-cut').disabled=true;
+  status.textContent='AI 모델 준비 중… 처음 실행 시 큰 모델 파일을 받아 시간이 걸릴 수 있어요.';
+  try {
+    const canvas=document.createElement('canvas');
+    canvas.width=cutCanvas.width;canvas.height=cutCanvas.height;
+    canvas.getContext('2d',{willReadFrequently:true}).putImageData(basePixels,0,0);
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('이미지 인코딩 실패')),'image/png'));
+    // IMG.LY IS-Net (AGPL-3.0): 실제 이미지 전경 분할 모델. 모든 처리는 브라우저에서 실행.
+    const mod=await import('https://esm.sh/@imgly/background-removal@1.7.0?bundle&target=es2022');
+    const removeBackground=mod.default||mod.removeBackground;
+    if(typeof removeBackground!=='function')throw new Error('AI 엔진을 불러오지 못했어요.');
+    let last='';
+    const foreground=await removeBackground(blob,{
+      model:'isnet_fp16',device:'cpu',
+      output:{format:'image/png',type:'foreground'},
+      progress:(key,current,total)=>{
+        const progress=total>0?' '+Math.round(current/total*100)+'%':'';
+        const message=key.startsWith('fetch')?'AI 모델 다운로드':key.startsWith('compute')?'인물·사물 윤곽 처리':'AI 누끼 준비';
+        const value=message+progress;
+        if(value!==last){last=value;status.textContent=value+' · 사진은 기기 밖으로 업로드되지 않아요.';}
+      }
+    });
+    if(state.selected!==startId||!$('#cutout-dialog').open)throw new Error('편집 중인 사진이 변경되었어요.');
+    const bitmap=await createImageBitmap(foreground);
+    const context=cutCanvas.getContext('2d',{willReadFrequently:true});
+    context.clearRect(0,0,cutCanvas.width,cutCanvas.height);
+    context.drawImage(bitmap,0,0,cutCanvas.width,cutCanvas.height);
+    bitmap.close?.();
+    status.textContent='✅ AI 누끼 완료! 가장자리를 지우개·복원으로 다듬은 후 적용해 주세요.';
+  }catch(err){
+    status.textContent='⚠️ AI 누끼를 완료하지 못했어요. 인터넷 연결과 브라우저를 확인하거나 수동 지우개를 사용해 주세요. ('+(err instanceof Error?err.message:'모델 오류')+')';
+    console.error('AI cutout error',err);
+  }finally{
+    cutBusy=false;button.disabled=false;button.textContent='✨ AI 자동 누끼 다시 실행';
+    $('#apply-cut').disabled=false;
   }
-  for (let x = 0; x < w; x++) { visit(x); visit((h - 1) * w + x); }
-  for (let y = 0; y < h; y++) { visit(y * w); visit(y * w + w - 1); }
-  while (head < tail) {
-    const at = queue[head++], x = at % w, y = (at / w) | 0;
-    d[at * 4 + 3] = 0;
-    if (x > 0) visit(at - 1);
-    if (x < w - 1) visit(at + 1);
-    if (y > 0) visit(at - w);
-    if (y < h - 1) visit(at + w);
-  }
-  ctx.putImageData(im, 0, 0);
 }
 function brushAt(e) {
-  if (!basePixels) return;
+  if (!basePixels||cutBusy) return;
   const point = pointerCoords(e, cutCanvas), cx = Math.round(point.x * cutCanvas.width), cy = Math.round(point.y * cutCanvas.height);
   const radius = Number($('#brush').value), ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
   const image = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = image.data, original = basePixels.data;
   for (let y = Math.max(0, cy - radius); y < Math.min(cutCanvas.height, cy + radius); y++) {
     for (let x = Math.max(0, cx - radius); x < Math.min(cutCanvas.width, cx + radius); x++) {
-      if ((x - cx) ** 2 + (y - cy) ** 2 > radius ** 2) continue;
-      const index = (y * cutCanvas.width + x) * 4;
-      if (state.mode === 'erase') d[index + 3] = 0;
-      else { d[index] = original[index]; d[index + 1] = original[index + 1]; d[index + 2] = original[index + 2]; d[index + 3] = original[index + 3]; }
+      const distance=Math.hypot(x-cx,y-cy);if(distance>radius)continue;
+      const softness=Math.max(0,Math.min(1,(radius-distance)/Math.max(3,radius*.20)));
+      const strength=softness*.9;
+      const index=(y*cutCanvas.width+x)*4;
+      if(state.mode==='erase')d[index+3]=Math.round(d[index+3]*(1-strength));
+      else {
+        d[index]=original[index];d[index+1]=original[index+1];d[index+2]=original[index+2];
+        d[index+3]=Math.min(255,Math.round(d[index+3]+(original[index+3]-d[index+3])*strength));
+      }
     }
   }
   ctx.putImageData(image, 0, 0);
@@ -511,16 +516,16 @@ $('#auto-cut').onclick = autoCut;
 $('#erase-mode').onclick = () => setCutMode('erase');
 $('#restore-mode').onclick = () => setCutMode('restore');
 $('#brush').oninput = (e) => { $('#brush-label').textContent = e.target.value; };
-$('#tolerance').oninput = (e) => { $('#tolerance-label').textContent = e.target.value; };
+
 $('#reset-cut').onclick = () => { if (basePixels) cutCanvas.getContext('2d')?.putImageData(basePixels, 0, 0); };
 $('#apply-cut').onclick = () => {
-  const item = activeLayer(); if (!item || item.kind !== 'photo') return;
+  const item = activeLayer(); if (!item || item.kind !== 'photo' || cutBusy) return;
   const image = new Image();
   image.onload = () => { checkpoint(); item.image = image; $('#cutout-dialog').close(); render(); };
   image.src = cutCanvas.toDataURL('image/png');
 };
 $('#open-cut').onclick = openCutout;
-$('#close-cut').onclick = () => $('#cutout-dialog').close();
+$('#close-cut').onclick = () => {if(!cutBusy)$('#cutout-dialog').close();};
 
 $('#save').onclick = async () => {
   error('');
