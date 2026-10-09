@@ -164,31 +164,76 @@ function choosePhoto(i) {
   const p = state.photos[i]; if (!p) return;
   const box = $('#nasa-info'); box.replaceChildren();
   const summary=summarizeHubblePhoto(p);
-  const source=el('a',{href:/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/',target:'_blank',rel:'noopener noreferrer'},'NASA 원문 보기 ↗');
-  const heading=el('strong',{class:'nasa-info-heading'},summary.title);
+  const sourceURL=/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/';
+  const source=el('a',{href:sourceURL,target:'_blank',rel:'noopener noreferrer'},'NASA 원본 자료 ↗');
+  const label=el('span',{class:'nasa-subheading'},'✦ 사진에 담긴 실제 천체');
+  const object=el('strong',{class:'nasa-object-name'},summary.title);
+  const scientific=el('div',{class:'nasa-scientific-name'},'NASA 사진명 · '+p.name);
+  const descriptionLabel=el('strong',{class:'nasa-section-title'},'이 사진은 무엇을 보여 줄까?');
   const para=el('p',{class:'nasa-ko-description'},summary.description);
-  const row=el('div',{class:'nasa-info-actions'});
-  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'한국어 사진 설명 복사'},'⧉ 설명 복사');
+  const factLabel=el('strong',{class:'nasa-section-title nasa-fact-title'},'NASA 원문에서 확인한 내용');
+  const facts=el('div',{class:'nasa-source-description'},'NASA 원본 설명을 읽어오는 중이에요…');
+  const note=el('small',{class:'nasa-ko-note'},'NASA 원문 설명을 불러와 한국어로 자동 번역해요. 번역 내용은 원문과 함께 확인할 수 있어요.');
+  const actions=el('div',{class:'nasa-info-actions'});
+  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'현재 사진의 천체 이름과 설명 복사'},'⧉ 설명 복사');
   copy.onclick=async()=>{
-    const content=summary.title+'\n\n'+summary.description;
-    try {
-      if(!navigator.clipboard?.writeText)throw Error('No clipboard API');
+    const content=[object.textContent,scientific.textContent,descriptionLabel.textContent,para.textContent,
+      facts.hidden?'':factLabel.textContent+'\n'+facts.textContent].filter(Boolean).join('\n\n');
+    try{
+      if(!navigator.clipboard?.writeText)throw Error('Clipboard API unavailable');
       await navigator.clipboard.writeText(content);
-    } catch(e) {
-      const field=el('textarea',{'aria-label':'복사할 설명'});
-      field.value=content;
-      field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
-      document.body.append(field);
-      field.focus();field.select();
-      const copied=!!document.execCommand?.('copy');field.remove();
-      if(!copied){copy.textContent='길게 눌러 복사해 주세요';return;}
+    }catch(err){
+      const field=el('textarea',{'aria-label':'설명 복사용 입력창'});
+      field.value=content;field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.append(field);field.focus();field.select();
+      const success=!!document.execCommand?.('copy');field.remove();
+      if(!success){copy.textContent='설명을 길게 눌러 복사해 주세요';return;}
     }
-    copy.textContent='✓ 복사됨';
+    copy.textContent='✓ 복사 완료';
     setTimeout(()=>{if(copy.isConnected)copy.textContent='⧉ 설명 복사';},1800);
   };
-  row.append(copy,source);
-  const note=el('small',{class:'nasa-ko-note'},'사진 제목을 바탕으로 풀어 쓴 설명이에요.');
-  box.append(heading,para,row,note);
+  actions.append(copy,source);
+  box.append(label,object,scientific,descriptionLabel,para,factLabel,facts,actions,note);
+  const selectionId=state.imageRequest+1;
+  (async()=>{
+    if(!/^https:\/\/(?:science\.nasa\.gov|(?:www\.)?nasa\.gov|(?:www\.)?hubblesite\.org|(?:www\.)?esahubble\.org|(?:www\.)?spacetelescope\.org)\//i.test(sourceURL)){
+      facts.textContent='이 사진의 NASA 원본 주소를 확인할 수 없어서 추가 설명을 불러오지 못했어요.';
+      note.textContent='위 설명은 사진 제목을 바탕으로 작성했어요. NASA 원본 자료를 확인해 주세요.';
+      return;
+    }
+    try{
+      const cfg=window.PRINT_CONFIG||{};
+      if(!cfg.supabaseUrl)throw Error('원문 확인 서버 주소가 없습니다');
+      const controller=new AbortController();
+      const wait=setTimeout(()=>controller.abort(),25000);
+      let response;
+      try {
+        response=await fetch(cfg.supabaseUrl.replace(/\/$/,'')+'/functions/v1/hubble-caption',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({source:sourceURL,name:p.name}),signal:controller.signal
+        });
+      } finally {clearTimeout(wait);}
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||result.error)throw Error(result.error||'NASA 설명을 불러오지 못했어요');
+      if(state.imageRequest!==selectionId)return;
+      if(result.titleKorean&&result.titleKorean.length>=4)
+        object.textContent=result.titleKorean;
+      else if(result.title&&result.title!==p.name)
+        object.textContent=summary.title+' · '+result.title;
+      if(result.title)scientific.textContent='NASA 공식 대상명 · '+result.title;
+      if(result.description&&/[가-힣]/.test(result.description)){
+        facts.textContent=result.description;
+        note.textContent='NASA 원본 페이지에서 가져온 내용을 한국어로 자동 번역했습니다. 정확한 과학적 표현은 원문에서 확인해 주세요.';
+      }else{
+        facts.textContent='NASA 원문 자동 번역이 현재 제공되지 않아요. 위의 한국어 설명과 NASA 원본 링크를 참고해 주세요.';
+        note.textContent='번역 연결이 실패해 NASA에서 확인하지 않은 세부 정보는 추가하지 않았어요.';
+      }
+    }catch(err){
+      if(state.imageRequest!==selectionId)return;
+      facts.textContent='NASA 원문 설명을 지금 불러오지 못했어요. 아래에서 NASA 공식 페이지를 직접 확인할 수 있어요.';
+      note.textContent='위 한국어 설명은 사진 제목을 바탕으로 작성했어요. 원문을 불러오면 추가 정보가 표시됩니다.';
+    }
+  })();
   const serial = ++state.imageRequest;
   state.bg = null; render();
   const img = new Image(); img.crossOrigin = 'anonymous';
