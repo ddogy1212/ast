@@ -125,3 +125,69 @@
 /* Birthday landing footer credit */
 .creator-credit{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);font-size:16px;font-weight:600;letter-spacing:.05em;color:#ded9ff;text-align:center;z-index:2}
 @media(max-width:680px){.creator-credit{font-size:14px;bottom:20px;}}
+
+
+/* v6 — compact editor, not a panel of positioning buttons */
+.studio {grid-template-columns:245px minmax(350px,1fr) 305px}
+.panel {padding:24px 16px}
+.stage-top {gap:10px}
+.stage-top small {text-align:left;margin-left:12px}
+.editor-action-bar button {min-width:78px}
+.quick-actions {padding:7px 10px;margin:10px auto 6px;max-width:390px;border-radius:12px;box-shadow:none}
+.quick-actions .selected-description {display:none}
+.quick-actions button {min-height:38px;padding:8px 12px;font-weight:600;flex:1}
+.edit-selection-label {margin-bottom:18px;padding:10px 12px;font-size:11px}
+.layer-controls label {margin:8px 0 13px;font-size:12px}
+.layer-controls input[type=range] {margin:8px 0 15px}
+.editor-status {font-size:10px;min-height:17px;line-height:1.5}
+.stage-bottom {border:0;justify-content:flex-end;gap:7px;padding-top:4px}
+.stage-bottom span {margin-right:auto;font-weight:500}
+.stage-bottom button {font-size:10px;min-height:31px!important;padding:5px 8px!important}
+.right .tabs {margin-bottom:20px}
+.right .tabs button {min-height:45px;font-size:11px}
+.right .tip {margin:10px 0 5px}
+.right .setting-head {margin-top:12px}
+#no-layer.empty {padding:14px 12px;font-size:11px}
+.more-style {padding:7px 3px 15px;color:#aeb6d2;font-size:11px;border-top:1px solid #38405b}
+.more-style summary {cursor:pointer;list-style-position:inside;padding:7px 0}
+.more-style .style-options {margin:8px 0}
+#save {margin-top:10px;font-size:13px}
+#open-cut {font-size:13px}
+.cut-dialog {max-width:min(740px,95vw)}
+.cut-dialog .dialog-inner {padding:25px}
+.cut-actions {margin:14px 0;gap:8px}
+.cut-actions button {flex:1;font-size:12px;min-height:43px;white-space:nowrap}
+.cut-actions #auto-cut {flex:2}
+.cut-status {background:#222f4b;border:1px solid #515c85;border-radius:10px;padding:11px 13px;font-size:11px;line-height:1.7;color:#d7def6;margin:10px 0}
+.cut-dialog .cut-preview {height:min(48vh,500px)}
+.cut-dialog .cut-settings {display:block;margin:14px 0 5px}
+.cut-dialog .dialog-buttons button {min-height:44px;min-width:90px}
+.cut-license {margin:13px 0 0;font-size:9px;color:#8999b2;line-height:1.7}
+@media(max-width:1100px){
+ .studio {grid-template-columns:225px minmax(290px,1fr) 282px}
+ .panel {padding:20px 13px}
+}
+@media(max-width:940px){
+ .studio {grid-template-columns:240px minmax(290px,1fr)}
+ .right {grid-column:1/-1}
+ .right .tabs {max-width:520px}
+ .right .tab-pane {max-width:520px}
+ .right .layer-controls {max-width:520px}
+}
+@media(max-width:680px){
+ .studio {display:flex;flex-direction:column}
+ .center {order:-1}
+ .right {order:1}
+ .left {order:2}
+ .stage-top {justify-content:space-between}
+ .stage-top small {display:none}
+ .editor-action-bar {width:auto;max-width:45%;margin-left:auto!important}
+ .editor-action-bar button {min-width:0;font-size:10px;white-space:nowrap;min-height:34px}
+ .quick-actions {margin:8px auto}
+ .quick-actions button {min-height:39px}
+ .stage-bottom {justify-content:center;gap:8px}
+ .stage-bottom span {width:auto;margin:0 auto 0 0}
+ .cut-actions {flex-wrap:wrap}
+ .cut-actions #auto-cut {width:100%;flex:auto}
+ .cut-dialog .dialog-inner {padding:19px 15px}
+}
