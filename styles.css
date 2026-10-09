@@ -274,3 +274,26 @@
 .print-dialog .message{font-size:11px;color:#a7f3cf;min-height:12px;margin:12px 0;white-space:pre-line;line-height:1.75}
 .print-dialog .message.err{color:#ffa9bf}
 @media(max-width:680px){.maker-hero{margin:20px 0 25px;padding:15px 12px}.maker-hero>strong{font-size:24px}.print-dialog .dialog-inner{padding:19px}.print-dialog-actions button{flex:1}}
+
+/* Print request v2: two clearly separated actions and simple student identity form */
+[hidden]{display:none!important}
+#print-dialog{width:min(500px,94vw)}
+.print-identify-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.print-identify-grid>div{min-width:0}
+.print-identify-grid label{font-size:13px!important;font-weight:700;margin:15px 0 7px!important}
+.print-identify-grid input{width:100%;min-height:50px;font-size:16px;border:1px solid #74789e!important;border-radius:11px;background:#1d2943;color:#fff;padding:12px}
+.print-identify-grid input:focus{outline:3px solid #ae9cff66;outline-offset:1px;border-color:#b6a9ff!important}
+.print-identify-grid .field-tip{font-size:10px;color:#a1aec9;margin:6px 0 0}
+#print-dialog .print-consent{margin-top:20px;padding:13px;border:1px solid #424b6c;border-radius:12px;background:#17233b}
+#print-send{font-weight:800}
+.print-request-success{text-align:center;padding:8px 2px 0}
+.print-success-icon{font-size:40px;line-height:1.4}
+.print-request-success h3{margin:7px 0;color:#d4ffd9;font-size:21px}
+.print-request-success p{color:#c5cee6;font-size:12px;line-height:1.9}
+#print-receipt{background:#1c3050;border:1px solid #5d6790;padding:12px;border-radius:12px;font-weight:700;font-size:13px!important}
+.print-request-success .primary{min-height:49px;font-weight:800}
+.print-order-button{font-size:13px;line-height:1.45;min-height:53px}
+@media(max-width:420px){
+ .print-identify-grid{grid-template-columns:1fr;gap:2px}
+ #print-dialog .dialog-inner{padding:18px 16px}
+}
