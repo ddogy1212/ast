@@ -182,8 +182,8 @@ function renderRatios() {
     parent.append(btn);
   }
 }
-function cardDraw(canvas, exportMode = false) {
-  const { w, h } = ratios[state.ratio], factor = exportMode ? 4 : Math.max(1, Math.ceil(window.devicePixelRatio || 1));
+function cardDraw(canvas, exportMode = false, exportScale = 4) {
+  const { w, h } = ratios[state.ratio], factor = exportMode ? exportScale : Math.max(1, Math.ceil(window.devicePixelRatio || 1));
   canvas.width = Math.round(w * factor); canvas.height = Math.round(h * factor);
   const ctx = canvas.getContext('2d'); ctx.setTransform(factor, 0, 0, factor, 0, 0); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   const grad = ctx.createLinearGradient(0, 0, w, h);
@@ -605,6 +605,81 @@ $('#save').onclick = async () => {
     $('#promo-dialog').showModal();
   } catch (e) { error('파일 저장 실패: 외부 이미지 접근 권한 또는 브라우저 설정을 확인해 주세요.'); }
 };
+// Print submissions are intentionally separate from local PNG download.
+// A submission is successful ONLY after private Storage upload + validated DB RPC.
+let printerClient=null;
+async function getPrintClient(){
+  const c=window.PRINT_CONFIG||{};
+  if(!c.supabaseUrl||!c.supabaseAnonKey){
+    throw new Error('인쇄 접수 서버가 아직 연결되지 않았어요. 우선 PNG 저장 기능을 이용해 주세요.');
+  }
+  if(!printerClient){
+    const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+    printerClient=createClient(c.supabaseUrl,c.supabaseAnonKey,{
+      auth:{storageKey:'orbit-print-participant',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+    });
+  }
+  return printerClient;
+}
+function printMessage(msg,isError=false){
+  const el=$('#print-msg');el.textContent=msg;el.classList.toggle('err',isError);
+}
+$('#request-print').onclick=()=>{
+  printMessage('');
+  $('#print-dialog').showModal();
+  if(!window.PRINT_CONFIG?.supabaseUrl||!window.PRINT_CONFIG?.supabaseAnonKey)
+    printMessage('⚠️ 인쇄 접수 서버 연결 전입니다. 관리자 설정을 완료해야 실제 사진이 전달돼요.',true);
+};
+$('#print-cancel').onclick=()=>$('#print-dialog').close();
+$('#print-send').onclick=async()=>{
+  const nickname=$('#print-nickname').value.trim();
+  if(nickname.length<1||nickname.length>24){printMessage('표시할 이름을 1~24자로 입력해 주세요.',true);return;}
+  if(!$('#print-agree').checked){printMessage('사진 전송 및 인쇄 담당자 확인에 동의해야 접수할 수 있어요.',true);return;}
+  if(!state.bg||!state.photos.length){printMessage('먼저 허블 사진이 완전히 로딩되어야 해요.',true);return;}
+  const btn=$('#print-send');btn.disabled=true;
+  try{
+    printMessage('포토카드를 준비하는 중…');
+    const sb=await getPrintClient();
+    const {data:{user:existing}}=await sb.auth.getUser();
+    let uid=existing?.is_anonymous===true?existing.id:null;
+    if(!uid){
+      printMessage('비공개 접수 인증 중…');
+      const {data,error}=await sb.auth.signInAnonymously();
+      if(error)throw error;
+      uid=data.user.id;
+    }
+    await ensureFontsLoaded();
+    await document.fonts.ready;
+    const c=document.createElement('canvas');
+    cardDraw(c,true,2); // print-quality 1080 x 1720 for default 54 x 86 mm
+    const png=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error('PNG 생성에 실패했어요.')),'image/png'));
+    if(png.size>10485760)throw Error('인쇄 이미지가 10MB를 초과했어요. 추가한 사진 크기를 줄여주세요.');
+    if(png.size<1024)throw Error('이미지가 비어 있어요. 다시 만들어 주세요.');
+    const path=uid+'/'+crypto.randomUUID()+'.png';
+    printMessage('인쇄 담당자에게 비공개 사진 전송 중…');
+    const upload=await sb.storage.from('print-cards').upload(path,png,{
+      contentType:'image/png',upsert:false,cacheControl:'0'
+    });
+    if(upload.error)throw upload.error;
+    printMessage('인쇄 접수 기록 저장 중…');
+    const result=await sb.rpc('submit_print_order',{
+      p_file_path:path,
+      p_nickname:nickname,
+      p_month:state.month,
+      p_day:state.day,
+      p_ratio:state.ratio
+    });
+    if(result.error)throw result.error;
+    if(!result.data)throw Error('접수 번호가 반환되지 않았어요.');
+    $('#print-dialog').close();
+    $('#print-agree').checked=false;
+    alert('✅ 인쇄 접수가 완료됐어요!\n접수 이름: '+nickname+'\n접수 번호: '+String(result.data).slice(0,8)+'\n인쇄 담당자가 관리자 화면에서 PNG를 확인할 수 있어요.');
+    $('#promo-dialog').showModal();
+  }catch(e){
+    printMessage('접수 실패: '+(e instanceof Error?e.message:'연결 오류')+'\n접수 완료 안내가 나타나지 않았다면 사진이 전송됐다고 판단하지 마세요.',true);
+  }finally{btn.disabled=false;}
+};
+
 $('#close-promo').onclick = reset;
 $('#promo-dialog').addEventListener('close', () => { if (!$('#home').classList.contains('hidden')) return; reset(); });
 $('#brand').onclick = reset;
