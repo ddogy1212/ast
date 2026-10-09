@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10152b">
+<meta name="description" content="Orbit Keepsake 포토카드 인쇄 관리자 페이지">
+<title>Orbit Keepsake · 인쇄 관리</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+:root{color-scheme:dark;font-family:'Noto Sans KR',sans-serif;background:#0b1225;color:#f5f2ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 80% 5%,#29294f,transparent 40%),#0b1225;min-height:100dvh}
+button,input{font:inherit}button{cursor:pointer}
+a{color:#cfcaff;text-decoration:none}a:hover{text-decoration:underline}
+header{border-bottom:1px solid #323b54;padding:18px clamp(18px,4vw,64px);display:flex;align-items:center;justify-content:space-between;gap:14px;background:#101a2bda}
+.logo{font:800 19px 'DM Sans',sans-serif}.logo span{color:#aaa5ff}
+main{width:min(1120px,calc(100% - 30px));margin:35px auto 65px}
+h1{font-size:clamp(25px,3.4vw,36px);margin:7px 0 12px;letter-spacing:-1.3px}
+h2{font-size:18px}
+.sub{color:#aab4ce;font-size:13px;line-height:1.8}
+.eyebrow{color:#b9adff;font:700 11px 'DM Sans',sans-serif;letter-spacing:2px}
+.card{background:#19243c;border:1px solid #414c6b;border-radius:20px;padding:24px;box-shadow:0 10px 35px #0002}
+#auth-card{width:min(520px,100%);margin:35px auto}
+label{font-size:12px;color:#d4d2e8;display:block;margin:12px 0 9px}
+input{display:block;width:100%;height:48px;background:#111a30;border:1px solid #556080;border-radius:11px;padding:0 14px;color:#fff;outline-offset:2px}
+button{border:1px solid #7779ae;background:#303d65;color:#f5f2ff;border-radius:11px;min-height:41px;padding:9px 14px;font-size:12px;font-weight:700}
+button:hover{background:#4a5180}button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:#aaa3ff;color:#10132a;border:0}.primary:hover{background:#c5bdff}
+.danger{color:#ffb8cc;border-color:#84506e;background:#4b2d43}.danger:hover{background:#6b3655}
+.full{width:100%;margin-top:12px}
+small,.hint{color:#9ba8c3;font-size:11px}
+.message{margin:13px 0;color:#a4f0d3;font-size:12px;line-height:1.8;min-height:10px;white-space:pre-wrap}
+.err{color:#ffacbf!important}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:23px 0}
+.user{color:#a9b6d4;font-size:11px;margin-right:8px}
+.filters{display:flex;flex-wrap:wrap;gap:7px}
+.filters button.active{border-color:#aaa5ff;background:#494b79}
+.counter{color:#afbaff;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
+.order{padding:16px;border:1px solid #404969;background:#17243d;border-radius:16px;display:flex;flex-direction:column;gap:12px}
+.order-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.order h3{font-size:16px;margin:0;overflow-wrap:anywhere}
+.order small{font-size:10px}
+.meta{font-size:11px;color:#b5bed5;line-height:1.9}
+.tag{padding:6px 9px;border-radius:30px;background:#333957;color:#e2ddff;font-size:10px;white-space:nowrap}
+.tag.done{background:#183b38;color:#b5f3d6}.tag.printing{background:#4a4026;color:#ffe0a2}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:auto}
+.actions select{width:100%;height:40px;background:#283554;color:#e9e9fb;border:1px solid #566385;border-radius:9px;font:inherit;font-size:11px}
+.actions button{padding:9px 6px}
+.actions .wide{grid-column:1/-1}
+.empty{border:1px dashed #515975;padding:40px 20px;text-align:center;color:#a8b4d0;border-radius:17px}
+.hidden{display:none!important}
+.modal{border:1px solid #5b5e86;border-radius:20px;background:#171f35;color:#f4f0ff;padding:19px;max-width:min(600px,94vw);max-height:95vh;box-shadow:0 20px 80px #000a}
+.modal::backdrop{background:#060b1bcf}
+.modal img{display:block;max-width:100%;max-height:70vh;object-fit:contain;margin:15px auto;background:repeating-conic-gradient(#262d40 0 25%,#394359 0 50%) 50%/24px 24px}
+.modal>div{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#help{margin-top:30px;padding:19px;border:1px solid #34435f;border-radius:14px;color:#9aa8c5;font-size:11px;line-height:1.8}
+@media(max-width:600px){header{padding:14px}.logo{font-size:16px}main{margin-top:25px}.card{padding:18px}.grid{grid-template-columns:1fr}.order{gap:9px}.toolbar{align-items:stretch}.filters{width:100%}}
+@media print{header,nav,.toolbar,.actions,#help{display:none}}
+</style>
+<script src="./print-config.js"></script>
+</head>
+<body>
+<header><div class="logo">✦ orbit<span>.</span>keepsake <span style="font-size:12px;font-weight:500">/ PRINT DESK</span></div><a href="./index.html">← 포토카드 사이트</a></header>
+<main>
+<div class="eyebrow">PRIVATE PRINT MANAGEMENT</div>
+<h1>포토카드 인쇄 관리</h1>
+<p class="sub">완성된 카드를 비공개로 모으고, 인쇄 담당자만 다운로드할 수 있어요.</p>
+
+<section id="auth-card" class="card">
+ <h2>🔐 관리자 로그인</h2>
+ <p class="sub">승인된 인쇄 담당자 이메일로 일회용 로그인 링크를 받아요.</p>
+ <label for="admin-email">관리자 이메일</label>
+ <input id="admin-email" type="email" autocomplete="email" placeholder="friend@example.com">
+ <button class="primary full" id="login">이메일 로그인 링크 받기</button>
+ <p class="message" id="login-msg" role="status" aria-live="polite"></p>
+ <p class="hint">관리자 권한이 등록된 이메일만 사진과 주문 목록을 볼 수 있습니다.</p>
+</section>
+
+<section id="desk" class="hidden">
+ <div class="toolbar">
+  <div><span id="admin-identity" class="user"></span><button id="logout" type="button">로그아웃</button></div>
+  <div><span class="counter" id="order-count"></span> <button id="reload" type="button">↻ 새로고침</button></div>
+ </div>
+ <div class="toolbar">
+  <div id="filters" class="filters">
+   <button data-filter="all" class="active">전체</button>
+   <button data-filter="pending">인쇄 대기</button>
+   <button data-filter="printing">인쇄 중</button>
+   <button data-filter="done">완료</button>
+  </div>
+ </div>
+ <p id="desk-msg" class="message" role="status" aria-live="polite"></p>
+ <div id="orders" class="grid"></div>
+</section>
+<div id="help">✦ 인쇄용 PNG는 원본 크기로 다운로드해 주세요. 포토카드 기본형은 약 54×86mm이며, 프린터에서 100% 배율과 용지 설정을 확인해 주세요. 인쇄가 끝난 카드는 개인정보 보호를 위해 삭제하는 것을 권장합니다.</div>
+</main>
+
+<dialog id="preview" class="modal">
+ <div><strong id="preview-title">인쇄용 이미지</strong><button id="close-preview">닫기 ✕</button></div>
+ <img id="preview-img" alt="포토카드 인쇄 미리보기">
+ <button id="preview-download" class="primary full">PNG 내려받기</button>
+</dialog>
+<script type="module">
+const $=id=>document.getElementById(id);
+const cfg=window.PRINT_CONFIG||{};
+let db=null,authorized=false,filter='all',orders=[],refreshTimer=null,currentPreview=null;
+const safeName=s=>(s||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,24);
+function tell(id,msg,error=false){const el=$(id);el.textContent=msg;el.classList.toggle('err',error);}
+function add(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e;}
+async function client(){
+ if(db)return db;
+ if(!cfg.supabaseUrl||!cfg.supabaseAnonKey)throw Error('아직 Supabase 저장소가 연결되지 않았어요. 사이트 운영자에게 설정을 요청해 주세요.');
+ const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+ db=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{auth:{storageKey:'orbit-print-admin',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ return db;
+}
+async function signedUrl(path){
+ const sb=await client();const {data,error}=await sb.storage.from('print-cards').createSignedUrl(path,90);
+ if(error||!data?.signedUrl)throw Error(error?.message||'인쇄 이미지 접근 권한이 없어요.');
+ return data.signedUrl;
+}
+async function downloadFile(o){
+ const link=await signedUrl(o.file_path);
+ const response=await fetch(link);if(!response.ok)throw Error('이미지 다운로드 실패');
+ const blob=await response.blob();
+ const url=URL.createObjectURL(blob);
+ const anchor=document.createElement('a');anchor.href=url;anchor.download='orbit-'+safeName(o.nickname)+'-'+o.id.slice(0,8)+'.png';
+ document.body.append(anchor);anchor.click();anchor.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),15000);
+}
+function dateFmt(d){return new Date(d).toLocaleString('ko-KR',{dateStyle:'short',timeStyle:'short'});}
+const statuses={pending:'인쇄 대기',printing:'인쇄 중',done:'완료'};
+async function loadOrders(){
+ if(!authorized)return;
+ const sb=await client();tell('desk-msg','목록을 불러오는 중…');
+ const {data,error}=await sb.from('print_orders').select('id,nickname,file_path,birthday_month,birthday_day,ratio,status,created_at').order('created_at',{ascending:false}).limit(300);
+ if(error){tell('desk-msg','목록을 불러오지 못했습니다: '+error.message,true);return;}
+ orders=data||[];tell('desk-msg','');
+ renderOrders();
+}
+function renderOrders(){
+ const list=$('orders');list.replaceChildren();
+ const items=orders.filter(o=>filter==='all'||o.status===filter);
+ $('order-count').textContent='접수 '+orders.length+'건';
+ if(!items.length){list.append(add('div','현재 이 상태의 접수 카드가 없습니다.','empty'));return;}
+ items.forEach(o=>{
+  const card=add('article',undefined,'order');const top=add('div',undefined,'order-top');
+  top.append(add('h3',o.nickname),add('span',statuses[o.status]||o.status,'tag '+o.status));
+  card.append(top);
+  const meta=add('div',undefined,'meta');
+  meta.textContent='접수 '+dateFmt(o.created_at)+'\n생일 '+o.birthday_month+'월 '+o.birthday_day+'일 · '+o.ratio+'\n접수번호 '+o.id.slice(0,8);
+  meta.style.whiteSpace='pre-line';card.append(meta);
+  const acts=add('div',undefined,'actions');
+  const prev=add('button','👁 미리보기'),down=add('button','↓ PNG 저장');
+  prev.onclick=async()=>{try{
+   const url=await signedUrl(o.file_path);currentPreview=o;$('preview-title').textContent=o.nickname+' · 인쇄용 사진';
+   $('preview-img').src=url;$('preview').showModal();
+  }catch(e){tell('desk-msg',e.message,true)}};
+  down.onclick=async()=>{down.disabled=true;try{await downloadFile(o);tell('desk-msg','PNG 다운로드를 시작했어요.')}catch(e){tell('desk-msg',e.message,true)}finally{down.disabled=false}};
+  acts.append(prev,down);
+  const select=document.createElement('select');
+  select.setAttribute('aria-label',o.nickname+' 인쇄 상태');
+  Object.entries(statuses).forEach(([value,label])=>{const option=add('option',label);option.value=value;select.append(option)});
+  select.value=o.status;
+  select.onchange=async()=>{
+   const old=o.status;const sb=await client();select.disabled=true;
+   const {error}=await sb.from('print_orders').update({status:select.value}).eq('id',o.id);
+   if(error){select.value=old;tell('desk-msg','상태 변경 실패: '+error.message,true)}
+   else{o.status=select.value;tell('desk-msg','인쇄 상태를 변경했어요.')}
+   select.disabled=false;renderOrders();
+  };
+  const del=add('button','인쇄 후 파일 삭제','danger');
+  del.onclick=async()=>{
+   if(!confirm('이 포토카드 원본 파일과 접수 기록을 영구 삭제할까요?'))return;
+   const sb=await client();del.disabled=true;
+   const removed=await sb.storage.from('print-cards').remove([o.file_path]);
+   if(removed.error){tell('desk-msg','이미지 삭제 실패: '+removed.error.message,true);del.disabled=false;return;}
+   const deleted=await sb.from('print_orders').delete().eq('id',o.id);
+   if(deleted.error){tell('desk-msg','사진은 삭제됐지만 목록 삭제는 실패했습니다: '+deleted.error.message,true);del.disabled=false;return;}
+   await loadOrders();tell('desk-msg','사진과 접수 기록을 삭제했어요.');
+  };
+  del.classList.add('wide');acts.append(select,del);card.append(acts);list.append(card);
+ });
+}
+async function authenticate(){
+ try{
+  const sb=await client();const {data:{user},error}=await sb.auth.getUser();
+  if(error||!user){authorized=false;$('auth-card').classList.remove('hidden');$('desk').classList.add('hidden');return;}
+  const result=await sb.rpc('is_print_admin');
+  if(result.error||result.data!==true){
+   authorized=false;$('auth-card').classList.remove('hidden');$('desk').classList.add('hidden');
+   tell('login-msg','이 이메일은 아직 관리자 권한이 없어요. 사이트 운영자에게 승인 요청해 주세요.',true);
+   return;
+  }
+  authorized=true;$('auth-card').classList.add('hidden');$('desk').classList.remove('hidden');
+  $('admin-identity').textContent=user.email||'인쇄 관리자';
+  await loadOrders();
+  if(!refreshTimer)refreshTimer=setInterval(()=>{if(authorized)loadOrders()},30000);
+ }catch(e){tell('login-msg',e.message,true)}
+}
+$('login').onclick=async()=>{
+ const email=$('admin-email').value.trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){tell('login-msg','올바른 이메일 주소를 입력해 주세요.',true);return;}
+ $('login').disabled=true;
+ try{const sb=await client();
+  const {error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname}});
+  if(error)throw error;
+  tell('login-msg','이메일로 로그인 링크를 보냈어요. 메일에서 링크를 누르면 이 페이지로 돌아옵니다.');
+ }catch(e){tell('login-msg','로그인 실패: '+e.message,true)}
+ finally{$('login').disabled=false}
+};
+$('logout').onclick=async()=>{const sb=await client();await sb.auth.signOut();authorized=false;clearInterval(refreshTimer);refreshTimer=null;$('auth-card').classList.remove('hidden');$('desk').classList.add('hidden');tell('login-msg','로그아웃했어요.')};
+$('reload').onclick=loadOrders;
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderOrders()});
+$('close-preview').onclick=()=>{$('preview').close();$('preview-img').removeAttribute('src')};
+$('preview-download').onclick=async()=>{if(currentPreview)try{await downloadFile(currentPreview)}catch(e){alert(e.message)}};
+$('preview').addEventListener('close',()=>{$('preview-img').removeAttribute('src');currentPreview=null});
+if(!cfg.supabaseUrl||!cfg.supabaseAnonKey)tell('login-msg','현재 인쇄 접수 서버 연결 전입니다. Supabase 설정이 완료되면 사용할 수 있어요.',true);
+else authenticate();
+</script>
+</body>
+</html>
