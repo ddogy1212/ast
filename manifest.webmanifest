@@ -1,0 +1,39 @@
+{
+  "id": "/ast/",
+  "name": "Orbit Keepsake · 허블 포토카드",
+  "short_name": "Orbit Keepsake",
+  "description": "내 생일의 허블 우주 사진으로 나만의 포토카드를 만드는 앱",
+  "lang": "ko",
+  "start_url": "/ast/",
+  "scope": "/ast/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c1020",
+  "theme_color": "#0c1020",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/orbit-nebula.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
