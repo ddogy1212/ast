@@ -297,3 +297,20 @@
  .print-identify-grid{grid-template-columns:1fr;gap:2px}
  #print-dialog .dialog-inner{padding:18px 16px}
 }
+
+
+/* Korean astronomy explanation, not a metadata block */
+.nasa-info {background:linear-gradient(140deg,#202d49,#17243c);border:1px solid #566180;border-radius:16px;padding:17px 16px;margin-bottom:24px}
+.nasa-info .nasa-info-heading {display:block;font-size:15px;line-height:1.5;letter-spacing:-.03em;color:#f0ecff;font-weight:800}
+.nasa-info .nasa-ko-description {font-size:12px;line-height:1.95;color:#d6dcee;white-space:normal;max-height:none;overflow:visible;user-select:text;-webkit-user-select:text;word-break:keep-all;margin:11px 0 0}
+.nasa-info .nasa-info-actions {display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0 8px}
+.nasa-info .nasa-copy-button {min-height:38px;padding:8px 13px;background:#383e6b;color:#f1edff;border:1px solid #a49bfb;border-radius:10px;font-size:12px;font-weight:750}
+.nasa-info .nasa-copy-button:hover {background:#4d5588}
+.nasa-info .nasa-info-actions a {color:#c5c0ff;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.nasa-info .nasa-ko-note {color:#8e9ebd;display:block;line-height:1.7;font-size:10px}
+.maker-hero {margin-top:15px}
+@media(max-width:680px) {
+  .nasa-info {padding:17px 15px}
+  .nasa-info .nasa-ko-description {font-size:13px;line-height:2}
+  .nasa-info .nasa-copy-button {min-height:44px}
+}
