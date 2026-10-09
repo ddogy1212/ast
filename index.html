@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-v4" />
+<meta name="orbit-build" content="20261009-v5" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -119,11 +119,24 @@
  .color-dot,.primary,.secondary { transition:none!important; }
 }
 
+.mobile-photo-section { display:none; }
+@media(max-width:680px){
+ .center {order:-1;}
+ .right {order:1;}
+ .left {order:2;}
+ .mobile-photo-section {display:block; margin:12px 0 4px;padding:10px 8px;background:#18243d;border:1px solid #3c4569;border-radius:14px;}
+ .mobile-photo-label {color:#c9c5ed;font-size:11px;font-weight:700;margin:2px 0 9px 4px;}
+ .mobile-photo-list {display:flex;gap:9px;overflow-x:auto;scrollbar-width:thin;padding:4px 3px 7px;}
+ .mobile-photo-btn {padding:3px;border-radius:11px;flex:none;width:72px;height:75px;background:#202940;border:2px solid #485271;cursor:pointer;}
+ .mobile-photo-btn img {width:100%;height:100%;object-fit:cover;border-radius:7px;}
+ .mobile-photo-btn.active {border-color:#d4c6ff;background:#474e78;box-shadow:0 0 0 2px #a29bff55;}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v4.0</span></header>
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v5.0</span></header>
 <main id="home" class="home">
  <div class="hero-copy">
   <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
@@ -159,7 +172,11 @@
     <label class="snap-switch" title="중앙선 및 다른 요소 위치에 자동 맞춤"><input type="checkbox" id="snap-toggle" checked/> ⊕ 자동 정렬</label>
    </div>
   </div>
-  <div class="canvas-wrap"><div class="canvas-glow"></div><canvas id="card" width="540" height="860" tabindex="0" aria-label="편집 중인 포토카드. 추가된 요소를 누르고 드래그하세요. 선택 후 방향키 이동도 가능합니다."></canvas></div>
+  <div class="mobile-photo-section">
+     <div class="mobile-photo-label">🌌 우주 배경 사진 고르기 · 옆으로 넘겨보세요</div>
+     <div id="mobile-photos" class="mobile-photo-list" aria-label="허블 사진 미리보기 선택"></div>
+    </div>
+   <div class="canvas-wrap"><div class="canvas-glow"></div><canvas id="card" width="540" height="860" tabindex="0" aria-label="편집 중인 포토카드. 추가된 요소를 누르고 드래그하세요. 선택 후 방향키 이동도 가능합니다."></canvas></div>
   
   <div id="quick-actions" class="quick-actions hidden" role="toolbar" aria-label="선택한 요소 바로 편집">
    <div class="selected-description">✦ 선택한 요소를 수정해 보세요</div>
@@ -358,6 +375,16 @@ function renderPhotos() {
     btn.append(img, texts); if (state.photo === i) btn.append(el('span', { class: 'check' }, '✓'));
     btn.addEventListener('click', () => choosePhoto(i)); list.append(btn);
   });
+  const strip=$('#mobile-photos');
+  if(strip){
+    strip.replaceChildren();
+    state.photos.forEach((photo,i)=>{
+      const b=el('button',{type:'button',class:'mobile-photo-btn'+(i===state.photo?' active':''),'aria-label':'배경 사진: '+photo.name,'aria-pressed':String(i===state.photo),title:photo.name});
+      b.append(el('img',{src:photo.image,alt:photo.name,loading:'lazy'}));
+      b.onclick=()=>choosePhoto(i);
+      strip.append(b);
+    });
+  }
 }
 function choosePhoto(i) {
   state.photo = i; renderPhotos(); error('');
@@ -651,8 +678,8 @@ $$('.style-options button').forEach(b=>b.onclick=()=>{
 document.addEventListener('keydown',e=>{
  const tag=document.activeElement?.tagName?.toLowerCase();
  const isEditing=tag==='input'||tag==='textarea'||tag==='select'||document.activeElement?.isContentEditable;
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
+ if(!isEditing&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
+ if(!isEditing&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
  if($('#studio').classList.contains('hidden')||isEditing)return;
  if(e.key==='Escape'&&state.selected){state.selected=null;updateSelection();return;}
  if((e.key==='Delete'||e.key==='Backspace')&&state.selected){e.preventDefault();removeSelected();return;}
