@@ -130,6 +130,16 @@ function renderPhotos() {
     btn.append(img, texts); if (state.photo === i) btn.append(el('span', { class: 'check' }, '✓'));
     btn.addEventListener('click', () => choosePhoto(i)); list.append(btn);
   });
+  const strip=$('#mobile-photos');
+  if(strip){
+    strip.replaceChildren();
+    state.photos.forEach((photo,i)=>{
+      const b=el('button',{type:'button',class:'mobile-photo-btn'+(i===state.photo?' active':''),'aria-label':'배경 사진: '+photo.name,'aria-pressed':String(i===state.photo),title:photo.name});
+      b.append(el('img',{src:photo.image,alt:photo.name,loading:'lazy'}));
+      b.onclick=()=>choosePhoto(i);
+      strip.append(b);
+    });
+  }
 }
 function choosePhoto(i) {
   state.photo = i; renderPhotos(); error('');
@@ -423,8 +433,8 @@ $$('.style-options button').forEach(b=>b.onclick=()=>{
 document.addEventListener('keydown',e=>{
  const tag=document.activeElement?.tagName?.toLowerCase();
  const isEditing=tag==='input'||tag==='textarea'||tag==='select'||document.activeElement?.isContentEditable;
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
+ if(!isEditing&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
+ if(!isEditing&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
  if($('#studio').classList.contains('hidden')||isEditing)return;
  if(e.key==='Escape'&&state.selected){state.selected=null;updateSelection();return;}
  if((e.key==='Delete'||e.key==='Backspace')&&state.selected){e.preventDefault();removeSelected();return;}
