@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-print-v2" />
+<meta name="orbit-build" content="20261009-hubble-ko-v1" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -308,6 +308,23 @@
  #print-dialog .dialog-inner{padding:18px 16px}
 }
 
+
+/* Korean astronomy explanation, not a metadata block */
+.nasa-info {background:linear-gradient(140deg,#202d49,#17243c);border:1px solid #566180;border-radius:16px;padding:17px 16px;margin-bottom:24px}
+.nasa-info .nasa-info-heading {display:block;font-size:15px;line-height:1.5;letter-spacing:-.03em;color:#f0ecff;font-weight:800}
+.nasa-info .nasa-ko-description {font-size:12px;line-height:1.95;color:#d6dcee;white-space:normal;max-height:none;overflow:visible;user-select:text;-webkit-user-select:text;word-break:keep-all;margin:11px 0 0}
+.nasa-info .nasa-info-actions {display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0 8px}
+.nasa-info .nasa-copy-button {min-height:38px;padding:8px 13px;background:#383e6b;color:#f1edff;border:1px solid #a49bfb;border-radius:10px;font-size:12px;font-weight:750}
+.nasa-info .nasa-copy-button:hover {background:#4d5588}
+.nasa-info .nasa-info-actions a {color:#c5c0ff;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.nasa-info .nasa-ko-note {color:#8e9ebd;display:block;line-height:1.7;font-size:10px}
+.maker-hero {margin-top:15px}
+@media(max-width:680px) {
+  .nasa-info {padding:17px 15px}
+  .nasa-info .nasa-ko-description {font-size:13px;line-height:2}
+  .nasa-info .nasa-copy-button {min-height:44px}
+}
+
 </style>
 </head>
 <body>
@@ -317,9 +334,7 @@
  <div class="hero-copy">
   <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
   <h1>우주가 기억하는<br/><em>너의 특별한 하루.</em></h1>
-  <p>당신의 생일에 허블 우주망원경이 관측한 우주를 만나보세요.<br/>그날의 별빛을 세상에 하나뿐인 포토카드로 간직해요.</p>
   <div class="maker-hero" aria-label="제작자 윤현">
-   <span>MADE BY YOONHYUN</span>
    <strong>모든 것은 <em>"윤현"</em>이 제작함</strong>
   </div>
   <section class="birthday-box"><h2><span class="step">01</span> 언제 태어났나요?</h2><p>태어난 <b>월과 일</b>을 선택하면 NASA 아카이브에서 글자 없는 은하·성운·행성 사진을 찾아드려요.</p>
@@ -456,6 +471,7 @@
 <dialog id="promo-dialog" class="dialog promo-dialog"><div class="dialog-inner promo-inner"><h2>방금 만든 포토카드<br/><em>키링으로 달고다니고싶지 않으세요?</em></h2><p class="muted">화면 속 우주를 작은 선물로 간직해보세요.</p><img src="./assets/promo.svg" alt="직접 제작한 기억 CD와 우주 포토카드 키링 홍보 이미지"/><small class="promo-label">TAPMOMENT · MEMORY CD & KEYRING</small><a href="https://tapmoment-shop.ddogy503.chatgpt.site/" target="_blank" rel="noopener noreferrer" class="primary full btn-link">기억 CD 구경하기 ↗</a><button id="close-promo" class="secondary full">닫기 · 처음 화면으로</button></div></dialog>
 </div>
 <script src="./print-config.js"></script>
+<script src="./hubble-ko.js"></script>
 <script>
 /** Orbit Keepsake — client-only graphics and personal image processing.
  * No photo data, text, or birthday is transmitted except the month/day NASA lookup.
@@ -622,8 +638,32 @@ function choosePhoto(i) {
   state.photo = i; renderPhotos(); error('');
   const p = state.photos[i]; if (!p) return;
   const box = $('#nasa-info'); box.replaceChildren();
-  const source = el('a', { href: /^https:\/\//.test(p.source) ? p.source : 'https://science.nasa.gov/mission/hubble/', target: '_blank', rel: 'noopener noreferrer' }, 'NASA 원본과 설명 보기 ↗');
-  box.append(el('strong', {}, p.name), el('p', {}, p.description), source);
+  const summary=summarizeHubblePhoto(p);
+  const source=el('a',{href:/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/',target:'_blank',rel:'noopener noreferrer'},'NASA 원문 보기 ↗');
+  const heading=el('strong',{class:'nasa-info-heading'},summary.title);
+  const para=el('p',{class:'nasa-ko-description'},summary.description);
+  const row=el('div',{class:'nasa-info-actions'});
+  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'한국어 사진 설명 복사'},'⧉ 설명 복사');
+  copy.onclick=async()=>{
+    const content=summary.title+'\n\n'+summary.description;
+    try {
+      if(!navigator.clipboard?.writeText)throw Error('No clipboard API');
+      await navigator.clipboard.writeText(content);
+    } catch(e) {
+      const field=el('textarea',{'aria-label':'복사할 설명'});
+      field.value=content;
+      field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
+      document.body.append(field);
+      field.focus();field.select();
+      const copied=!!document.execCommand?.('copy');field.remove();
+      if(!copied){copy.textContent='길게 눌러 복사해 주세요';return;}
+    }
+    copy.textContent='✓ 복사됨';
+    setTimeout(()=>{if(copy.isConnected)copy.textContent='⧉ 설명 복사';},1800);
+  };
+  row.append(copy,source);
+  const note=el('small',{class:'nasa-ko-note'},'사진 제목을 바탕으로 풀어 쓴 설명이에요.');
+  box.append(heading,para,row,note);
   const serial = ++state.imageRequest;
   state.bg = null; render();
   const img = new Image(); img.crossOrigin = 'anonymous';
