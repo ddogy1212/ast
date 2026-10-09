@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="orbit-build" content="20261009-v4" />
+<meta name="theme-color" content="#0c1020" />
+<title>Orbit Keepsake | 생일의 허블 포토카드</title>
+<meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+:root{font-family:'Noto Sans KR',sans-serif;color:#f5f3ff;background:#0c1020;font-synthesis:none}*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden}body{background:radial-gradient(ellipse at 87% 0,#25264d,transparent 40%),radial-gradient(ellipse at 0 90%,#161c36,transparent 50%),#0c1020;color:#f5f3ff}body:before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.35;background-image:radial-gradient(1px 1px at 10% 15%,#fff 97%,transparent),radial-gradient(1px 1px at 65% 75%,#fff 97%,transparent),radial-gradient(1px 1px at 80% 30%,#ddd5ff 97%,transparent);background-size:320px 280px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #d4c8ff;outline-offset:3px}a{color:#c8c3ff;text-decoration:none}.hidden{display:none!important}.topbar{position:relative;z-index:1;height:82px;border-bottom:1px solid #42445b70;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:#090d1c55;backdrop-filter:blur(14px)}.brand{font:700 24px 'DM Sans',sans-serif;letter-spacing:-1.2px;background:none;color:#f7f4ff;border:none;display:flex;align-items:center;gap:9px;padding:0}.brand-icon{font-size:25px;border:1px solid #918af2;width:38px;height:38px;border-radius:13px;background:#292b54;display:grid;place-items:center;color:#e3d5ff}.dot{color:#a7a2ff;margin-left:-8px}.tag,.eyebrow{font:700 11px 'DM Sans',sans-serif;letter-spacing:2.5px;color:#c8bfff}.home{max-width:1330px;margin:auto;min-height:calc(100vh - 82px);position:relative;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:5%;padding:64px 4vw}.hero-copy{position:relative;z-index:1}.eyebrow{display:inline-block;border:1px solid #b0a9ff55;background:#6761bb1c;border-radius:99px;padding:11px 17px}.hero-copy h1{font-size:clamp(37px,4.4vw,64px);line-height:1.27;letter-spacing:-2px;font-weight:800;margin:25px 0 20px}.hero-copy h1 em,.promo-inner h2 em{font-style:normal;color:#bcb3ff}.hero-copy>p{font-size:14px;color:#b3bad2;line-height:1.95;margin:0 0 30px}.birthday-box{max-width:520px;padding:30px;border:1px solid #77779e70;border-radius:24px;background:linear-gradient(135deg,#242c4ce8,#131d35ed);box-shadow:0 25px 80px #0003}.birthday-box h2,.panel h2{display:flex;align-items:center;gap:10px;font-size:18px;margin:0}.step{display:inline-flex;align-items:center;justify-content:center;background:#b7aefc;color:#16192b;font:800 12px 'DM Sans',sans-serif;width:26px;height:26px;border-radius:50%;flex-shrink:0}.birthday-box p{color:#abb4ca;font-size:12px;line-height:1.75;margin:12px 0 22px}.date-fields{display:flex;gap:14px;margin-bottom:17px}.date-fields label{flex:1;min-width:0;color:#bfc4e2;font:700 10px 'DM Sans',sans-serif;letter-spacing:1.7px}.date-fields select{display:block;width:100%;margin-top:9px;background:#19253c;color:#f7f2ff;border:1px solid #4d5675;border-radius:10px;height:49px;padding:0 14px;font:500 15px 'Noto Sans KR',sans-serif}.primary,.secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;background:#a7a2ff;color:#141829;border:1px solid #a7a2ff;border-radius:11px;font-weight:800;min-height:41px;padding:9px 17px;transition:background .2s,transform .2s}.primary:hover{background:#c5c0ff;transform:translateY(-1px)}.secondary{background:#313b58;color:#eeebff;border-color:#4f587a}.secondary:hover{background:#454e77}.full{width:100%}.birthday-box small{color:#919ab9;font-size:10px;line-height:1.7}.error{color:#ffabb4!important;font-size:11px!important;line-height:1.6!important;min-height:0;margin:10px 0!important}.benefits{display:flex;flex-wrap:wrap;gap:18px;color:#b0b7cc;margin-top:24px;font-size:11px}.benefits span{display:inline}.hero-visual{height:660px;display:grid;place-items:center;position:relative}.halo{position:absolute;width:520px;height:520px;border:1px solid #b8abef25;border-radius:50%;box-shadow:0 0 0 55px #9d82ca05,0 0 0 110px #ab8cce03;background:radial-gradient(ellipse,#a89ce322,transparent 69%)}.hero-card{position:relative;width:min(73%,345px);aspect-ratio:540/860;border:9px solid #ede9ff;border-radius:21px;overflow:hidden;transform:rotate(8deg);box-shadow:0 40px 70px #0008,0 0 80px #8f84d833;background:#253252}.hero-card img{width:100%;height:100%;object-fit:cover}.hero-frame{position:absolute;inset:20px;border:1px solid #fff9;color:#fff;padding:23px;display:flex;flex-direction:column;font-size:27px}.hero-frame div{font:36px/1.15 'DM Serif Display',serif;margin-top:auto;margin-bottom:22px;text-shadow:0 3px 12px #101122}.hero-frame small{font:11px 'DM Sans',sans-serif;letter-spacing:2px}.float-note{position:absolute;top:12%;left:0;transform:rotate(-12deg);font:italic 26px 'DM Serif Display',serif;color:#e9ddff}.studio{display:grid;grid-template-columns:285px minmax(300px,1fr) 335px;max-width:1750px;margin:auto;min-height:calc(100vh - 82px);position:relative}.panel{padding:26px 21px;background:#131c31de}.left{border-right:1px solid #41486177}.right{border-left:1px solid #41486177}.panel h2{font-size:15px;margin:0 0 20px}.birthday-mini{display:flex;gap:11px;align-items:center;border:1px solid #434b68;border-radius:12px;padding:12px;background:#222a46}.birthday-mini>span{font-size:22px;color:#c5bbff}.birthday-mini div{display:flex;flex-direction:column;flex:1;gap:4px}.birthday-mini small{font-size:8px;letter-spacing:1px;color:#a8afcc}.birthday-mini strong{font-size:15px}.muted{color:#a8b2cc;font-size:11px;line-height:1.8}.small-btn{padding:7px;background:transparent;border:1px solid transparent;color:#c8c1ff;border-radius:9px;font-size:10px}.small-btn:hover{background:#313a5c}.photo-list{display:flex;flex-direction:column;gap:8px;margin:15px 0 20px}.photo-option{display:flex;align-items:center;gap:9px;text-align:left;padding:6px;border:1px solid #343f5d;border-radius:11px;background:#202a42;color:#f3f0ff;width:100%;min-height:64px}.photo-option.active,.photo-option:hover{background:#393b61;border-color:#b9aaff}.photo-option img{width:57px;height:53px;object-fit:cover;border-radius:7px}.photo-option strong{font-size:11px;line-height:1.35;display:block}.photo-option small{font-size:9px;color:#abb6ca;display:block;margin-top:5px}.photo-option .check{margin-left:auto;color:#d5c7ff}.nasa-info{border:1px solid #34405c;background:#18213a;border-radius:13px;padding:13px;margin-bottom:32px}.nasa-info strong{font-size:12px}.nasa-info p{color:#a9b3cb;font-size:10px;line-height:1.7;max-height:85px;overflow:auto}.nasa-info a{font-size:10px;color:#cac1ff}.ratios{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ratio-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#1c263e;border:1px solid #3c465f;border-radius:10px;color:#b6bfd3;min-height:62px;font-size:10px;padding:7px}.ratio-btn.active{border-color:#a8a1ff;background:#3a3e64;color:#faf4ff}.ratio-symbol{display:block;width:auto;height:25px;max-width:30px;background:#b3b7ff44;border:1px solid #ece5ff}.source-note{font-size:10px;line-height:1.75;color:#919cb7;margin-top:22px}.center{display:flex;flex-direction:column;min-width:0;padding:24px 19px}.stage-top,.stage-bottom{display:flex;gap:8px;justify-content:space-between;align-items:center;color:#99a4c2;font-size:10px}.stage-top span{font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:1.7px;color:#c0b9ff}.canvas-wrap{position:relative;min-height:550px;flex:1;display:grid;place-items:center;padding:20px 0;isolation:isolate}.canvas-glow{position:absolute;z-index:-1;background:radial-gradient(ellipse,#7774d53c,transparent 68%);width:85%;height:90%}#card{width:auto;max-width:100%;max-height:68vh;display:block;touch-action:none;cursor:grab;border:6px solid #eeebf8;border-radius:16px;box-shadow:0 30px 75px #000a,0 0 75px #8d86db33}#card:active{cursor:grabbing}.stage-bottom{border-top:1px solid #343e57;padding-top:14px;flex-wrap:wrap}.right .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:#0e162b;border:1px solid #34415a;padding:5px;border-radius:12px;margin-bottom:23px}.tabs button{color:#aeb6ce;background:transparent;border:0;border-radius:9px;padding:13px 3px;font-size:11px}.tabs button.active{background:#3a3f68;color:#fff}.field-label{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;margin-bottom:8px;color:#c5c3e6}.tab-pane input:not([type=file]):not([type=range]),#edit-text{width:100%;padding:12px;border-radius:9px;border:1px solid #4b5574;background:#1d2941;color:white}.color-palette{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:15px 0}.color-palette span{font-size:10px;color:#b6bed3;margin-right:auto}.color-dot{width:22px;height:22px;border-radius:50%;border:2px solid #59617d;padding:0}.color-dot.active{outline:2px solid #c6beff;outline-offset:2px}.tip{font-size:10px;color:#929fb9;line-height:1.8}.upload-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:160px;border:1px dashed #6f74a0;background:#242d4d;border-radius:13px;color:#c4bbff;font-size:29px;cursor:pointer}.upload-box strong{font-size:13px}.upload-box small{font-size:10px;color:#b1b9d2}.upload-box input{display:none}.callout{margin:18px 0;color:#ccc5ff;font-weight:700;font-size:12px}.callout small{font-size:10px;color:#aeb9d2;font-weight:400}.stickers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stickers button{height:59px;font-size:28px;background:#202a43;border:1px solid #414b68;border-radius:11px}.stickers button:hover{border-color:#aca6ff}.right hr{border:0;border-top:1px solid #38405b;margin:25px 0 20px}.setting-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;font-size:13px}.layer-controls label{font-size:11px;display:block;color:#c3cbe3;margin:16px 0 22px}.layer-controls output{float:right}.layer-controls input[type=range],.cut-settings input[type=range]{display:block;width:100%;margin-top:12px;accent-color:#aaa4ff}.empty{font-size:10px;line-height:1.8;text-align:center;padding:19px 11px;background:#1a243a;border:1px dashed #414a66;border-radius:11px;color:#97a5c1}.style-options{display:flex;gap:9px;margin-bottom:26px}.style-options button{flex:1;padding:12px 7px;border:1px solid #434b66;background:#1c273f;color:#c6c9db;border-radius:10px;font-size:11px}.style-options button.active{border-color:#aaa4ff;background:#363d66;color:#fff}.save{min-height:51px;font-size:13px}.centered{text-align:center}.dialog{max-width:calc(100vw - 25px);border:1px solid #77769a;background:#182138;color:#f5f2ff;border-radius:23px;padding:0;box-shadow:0 25px 110px #050614cf}.dialog::backdrop{background:#080e24c9;backdrop-filter:blur(6px)}.dialog-inner{position:relative;padding:27px;max-height:94vh;overflow:auto}.dialog-inner h2{font-size:24px;margin:0 0 12px}.close-x{float:right;background:none;border:none;color:#cecaff;font-size:30px;margin-top:-10px}.cut-dialog{width:min(720px,95vw)}.cut-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.cut-settings{display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px;color:#c3bfeb;margin-bottom:15px}.cut-preview{height:min(47vh,420px);display:flex;align-items:center;justify-content:center;overflow:auto;border-radius:14px;border:1px solid #777d9b;background-color:#cecfdd;background-image:linear-gradient(45deg,#a5a8b9 25%,transparent 25%),linear-gradient(-45deg,#a5a8b9 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#a5a8b9 75%),linear-gradient(-45deg,transparent 75%,#a5a8b9 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}#cut-canvas{max-width:100%;max-height:100%;object-fit:contain;touch-action:none;cursor:crosshair}.dialog-buttons{margin-top:19px;display:flex;gap:10px;justify-content:flex-end}.promo-dialog{width:min(425px,95vw)}.promo-inner{text-align:center;padding:24px}.promo-inner h2{font-size:22px;line-height:1.52}.promo-inner>img{width:100%;max-height:42vh;object-fit:contain;border-radius:14px;margin:13px 0}.promo-label{font:700 10px 'DM Sans',sans-serif;letter-spacing:1.6px;display:block;color:#bcb4ef;margin:0 0 15px}.promo-inner>.full{margin-top:9px}.btn-link{display:flex}
+@media(max-width:1150px){.studio{grid-template-columns:250px minmax(260px,1fr) 286px}.panel{padding:20px 14px}.center{padding:20px 12px}.hero-visual{height:530px}.halo{width:400px;height:400px}}
+@media(max-width:940px){.studio{grid-template-columns:265px minmax(300px,1fr)}.right{grid-column:1/-1;border-left:0;border-top:1px solid #343d58}.home{gap:2%}.hero-visual{height:490px}.halo{width:340px;height:340px}}
+@media(max-width:680px){.topbar{height:65px;padding:0 16px}.brand{font-size:20px}.brand-icon{width:31px;height:31px;font-size:20px}.tag{display:none}.home{display:flex;flex-direction:column;gap:20px;padding:28px 18px 65px}.hero-copy h1{font-size:38px;letter-spacing:-1px}.hero-copy>p{font-size:12px}.birthday-box{padding:23px 18px}.hero-visual{width:100%;height:410px}.halo{width:290px;height:290px}.hero-card{width:210px}.hero-frame div{font-size:23px}.float-note{font-size:18px}.benefits{font-size:10px;gap:10px}.studio{display:flex;flex-direction:column}.panel{padding:18px;border:0}.left{border-bottom:1px solid #40445f}.photo-list{display:grid;grid-template-columns:repeat(2,1fr)}.photo-option img{width:45px;height:50px}.photo-option strong{font-size:9px}.photo-option small{font-size:8px}.ratios{grid-template-columns:repeat(3,1fr)}.center{padding:18px;min-height:430px}.canvas-wrap{min-height:380px;padding:20px 0}#card{max-width:92%;max-height:65vh}.stage-top small{font-size:9px}.right{border-top:1px solid #414861}.dialog-inner{padding:19px}.cut-settings{grid-template-columns:1fr}.cut-actions button{font-size:10px}.promo-inner h2{font-size:18px}}
+
+
+/* Editor usability v4: clear actions, accessible controls, alignment feedback */
+.studio { grid-template-columns: 270px minmax(370px,1fr) 360px; }
+.panel { min-width:0; }
+.center { align-items:stretch; }
+.editor-action-bar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.editor-action-bar button, .stage-bottom button { min-height:36px; font-size:12px; padding:7px 11px; }
+.editor-action-bar button[disabled] { opacity:.35; }
+.editor-action-bar button:not(:disabled):hover { border-color:#b9b0ff; background:#323b67; }
+.stage-top { flex-wrap:wrap; padding-bottom:14px; border-bottom:1px solid #343d59; }
+.stage-top small { flex:1; font-size:11px; color:#d0c9e3; text-align:center; }
+.stage-top .editor-action-bar { margin-left:auto; }
+.snap-switch { display:inline-flex; align-items:center; gap:8px; background:#182b37; border:1px solid #3d766f; color:#c4f6ed; padding:8px 12px; border-radius:12px; font-size:11px; cursor:pointer; }
+.snap-switch input { width:17px; height:17px; accent-color:#77e5d4; cursor:pointer; }
+.canvas-wrap { min-height:480px; padding:23px 12px 15px; }
+.canvas-wrap #card { outline-offset:5px; max-width:min(100%,460px); }
+#card:focus-visible { outline:3px solid #a7a2ff; }
+.quick-actions { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; padding:14px 10px; margin:0 0 12px; background:linear-gradient(135deg,#303254ed,#1d2b45ed); border:1px solid #8079bd; border-radius:18px; box-shadow:0 8px 26px #05091566; }
+.quick-actions button { display:inline-flex; align-items:center; gap:7px; padding:11px 15px; border:1px solid #555e8e; border-radius:11px; background:#2e385a; color:#f5f3ff; min-height:44px; font-weight:700; font-size:12px; }
+.quick-actions button:hover { background:#55518b; border-color:#c5baff; }
+.quick-actions .delete-action { background:#402a48; border-color:#805477; color:#ffe4ee; }
+.quick-actions .delete-action:hover { background:#673653; }
+.quick-actions .selected-description { width:100%; text-align:center; font-size:11px; color:#ded8ff; font-weight:600; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.editor-status { min-height:24px; margin:7px auto; text-align:center; font-size:11px; color:#9feadd; }
+.stage-bottom { margin-top:3px; }
+.stage-bottom span { font-weight:700; }
+.stage-bottom .small-btn { color:#d0caf4; border:1px solid #444e72; background:#1b2641; }
+.right .tabs button { min-height:54px; font-size:12px; font-weight:700; transition:background .16s; }
+.right .tabs button.active { background:#474a7a; box-shadow:inset 0 0 0 1px #b7aaff; }
+.field-label { font-size:12px; letter-spacing:.5px; }
+#text-input,#edit-text { min-height:46px; font-size:15px; }
+#add-text, #open-cut, .save { min-height:49px; }
+.color-palette { margin:16px 0; gap:10px; }
+.color-palette span { display:block; width:100%; font-size:12px; margin-bottom:4px; }
+.color-palette > div { display:flex; flex-wrap:wrap; gap:11px; align-items:center; }
+.color-dot { width:36px; height:36px; border:2px solid #8890b5; transition:transform .14s; }
+.color-dot:hover { transform:scale(1.1); }
+.color-dot.active, .color-dot[aria-pressed="true"] { outline:3px solid #e7d9ff; outline-offset:3px; }
+.custom-picker { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; color:#d6d9ee; border:1px solid #485376; background:#222d48; padding:10px 13px; border-radius:11px; margin:8px 0 16px; cursor:pointer; }
+.custom-picker input { width:52px; height:38px; border:0; padding:0; border-radius:8px; background:transparent; cursor:pointer; }
+.setting-head b { font-size:15px; }
+.edit-selection-label { display:flex; align-items:center; gap:8px; background:#2a3256; border:1px solid #5f6088; border-radius:11px; padding:11px 13px; color:#e7e6ff; margin:4px 0 12px; font-size:12px; font-weight:700; }
+.edit-selection-label span:last-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.action-pair { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:10px 0 20px; }
+.action-pair button, .arrange-actions button { border:1px solid #5c638e; border-radius:11px; background:#303a60; color:#f6f2ff; min-height:44px; padding:10px 11px; font-size:12px; font-weight:700; }
+.action-pair button:hover,.arrange-actions button:hover { background:#494e87; }
+.action-pair .danger { color:#ffe3eb; background:#472d42; border-color:#95647c; }
+.position-panel { background:#1d2943; border:1px solid #414c6c; border-radius:14px; padding:16px 13px; margin:14px 0 20px; }
+.position-panel h3 { font-size:12px; margin:0 0 12px; display:flex; justify-content:space-between; gap:5px; color:#ede9ff; }
+.position-panel p { font-size:10px; color:#a5b6d3; line-height:1.7; margin:10px 0 0; }
+.arrange-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.nudge-pad { margin:14px auto 2px; width:max-content; display:grid; grid-template-columns:repeat(3,42px); grid-template-rows:repeat(3,40px); gap:3px; align-items:center; justify-content:center; }
+.nudge-pad button { display:grid;place-items:center;font-size:16px;padding:0;min-height:39px; }
+.nudge-pad .nudge-center { font-size:17px; color:#b6fff4; }
+.editor-layer-panel { background:#152139; border:1px solid #394663; padding:15px; border-radius:15px; margin-top:18px; }
+.editor-layer-panel h3 { margin:0 0 8px; font-size:13px; color:#e8e4ff; }
+.editor-layer-panel .layer-help { font-size:10px; color:#aab5ce; line-height:1.6; margin:0 0 13px; }
+.layer-list { display:flex; flex-direction:column; gap:6px; max-height:230px; overflow:auto; }
+.layer-entry { width:100%; min-height:43px; background:#202c47; border:1px solid #414c68; border-radius:10px; color:#dedff1; display:flex; align-items:center; gap:9px; text-align:left; padding:6px 10px; font-size:11px; cursor:pointer; }
+.layer-entry.active { border-color:#b4aaff; background:#3b416d; color:#fff; }
+.layer-entry:hover { border-color:#aa9deb; }
+.layer-entry-icon { display:grid;place-items:center;flex-shrink:0;width:26px;height:26px;border-radius:8px;background:#596089;color:white;font-weight:800; }
+.layer-entry>span:last-child { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.layer-empty { color:#929fba; font-size:11px; margin:6px 0; }
+.empty { font-size:12px; line-height:1.75; padding:23px 14px; }
+.layer-controls label { font-size:13px; }
+.layer-controls input[type=range] { margin:15px 0 20px; }
+.stickers button { min-height:62px; }
+.photo-option { min-height:68px; }
+.photo-option strong { font-size:12px; }
+@media(max-width:1200px){
+ .studio { grid-template-columns:230px minmax(320px,1fr) 315px; }
+ .panel { padding:17px 13px; }
+ .center { padding:18px 12px; }
+ .quick-actions button { padding:10px 11px; }
+}
+@media(max-width:960px){
+ .studio { grid-template-columns:245px minmax(290px,1fr); }
+ .right { grid-column:1/-1; }
+ .editor-layer-panel { max-width:750px; }
+}
+@media(max-width:680px){
+ .studio { display:flex; flex-direction:column; }
+ .center { order:-1; min-height:0; padding:15px 12px 17px; }
+ .left { order:1; }
+ .right { order:2; }
+ .stage-top { justify-content:center; gap:12px; }
+ .stage-top small { display:none; }
+ .editor-action-bar { width:100%; justify-content:center; flex-wrap:wrap; margin-left:0!important; }
+ .editor-action-bar button { flex:1; }
+ .canvas-wrap { min-height:315px; padding:16px 0; }
+ .canvas-wrap #card { max-height:58vh; }
+ .quick-actions { padding:12px 8px; gap:7px; }
+ .quick-actions button { flex:1 1 28%; justify-content:center; font-size:11px; padding:10px 6px; }
+ .stage-bottom { justify-content:center; gap:7px; }
+ .stage-bottom span { width:100%; text-align:center; margin-bottom:3px; }
+ .right .tabs button { min-height:58px; }
+ .color-dot { width:39px; height:39px; }
+ .position-panel { max-width:550px; }
+ .nudge-pad { margin:10px auto; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .color-dot,.primary,.secondary { transition:none!important; }
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v4.0</span></header>
+<main id="home" class="home">
+ <div class="hero-copy">
+  <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
+  <h1>우주가 기억하는<br/><em>너의 특별한 하루.</em></h1>
+  <p>당신의 생일에 허블 우주망원경이 관측한 우주를 만나보세요.<br/>그날의 별빛을 세상에 하나뿐인 포토카드로 간직해요.</p>
+  <section class="birthday-box"><h2><span class="step">01</span> 언제 태어났나요?</h2><p>태어난 <b>월과 일</b>을 선택하면 NASA 아카이브에서 글자 없는 은하·성운·행성 사진을 찾아드려요.</p>
+   <div class="date-fields"><label>MONTH · 월<select id="month"></select></label><label>DAY · 일<select id="day"></select></label></div>
+   <button class="primary full" id="start">내 생일의 우주 만나기 →</button><p id="home-error" class="error"></p><small>✦ 출생 연도가 아닌 월·일 기준입니다. 사진의 관측 연도는 따로 표시해요.</small>
+  </section>
+  <div class="benefits">✓ 공식 NASA 자료 <span>✓ 무료 PNG 저장</span><span>✓ 사진 누끼·꾸미기</span></div>
+ </div>
+ <div class="hero-visual"><div class="halo"></div><div class="hero-card"><img src="https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/july-19-2002-ngc300.jpg" alt="허블 관측 사진 예시"/></div></div>
+</main>
+<main id="studio" class="studio hidden">
+ <aside class="left panel">
+  <h2><span class="step">01</span> 나의 우주 사진</h2>
+  <div class="birthday-mini"><span>✦</span><div><small>MY COSMIC BIRTHDAY</small><strong id="birthday-label">7월 19일</strong></div><button id="change-date" class="small-btn">변경</button></div>
+  <p class="muted">그 날짜에 허블이 관측한 사진 중 하나를 선택해 주세요.</p>
+  <div id="photo-list" class="photo-list"></div>
+  <div id="nasa-info" class="nasa-info"></div>
+  <h2><span class="step">02</span> 카드 비율</h2>
+  <div id="ratios" class="ratios"></div>
+  <p class="source-note">NASA/ESA 출처. 실제 관측 연도는 출생 연도와 다를 수 있고 여러 날짜의 노출이 결합되기도 합니다. 이 사이트는 NASA의 공식 서비스나 후원 상품이 아닙니다.</p>
+ </aside>
+ <section class="center">
+  
+  <div class="stage-top">
+   <span>✦ PHOTO CARD STUDIO</span>
+   <small>요소를 탭하거나 드래그해 수정하세요</small>
+   <div class="editor-action-bar" role="toolbar" aria-label="편집 기록 및 정렬 설정">
+    <button id="history-undo" type="button" class="secondary" disabled title="실행 취소 Ctrl+Z">↶ 되돌리기</button>
+    <button id="history-redo" type="button" class="secondary" disabled title="다시 실행 Ctrl+Shift+Z">↷ 다시 실행</button>
+    <label class="snap-switch" title="중앙선 및 다른 요소 위치에 자동 맞춤"><input type="checkbox" id="snap-toggle" checked/> ⊕ 자동 정렬</label>
+   </div>
+  </div>
+  <div class="canvas-wrap"><div class="canvas-glow"></div><canvas id="card" width="540" height="860" tabindex="0" aria-label="편집 중인 포토카드. 추가된 요소를 누르고 드래그하세요. 선택 후 방향키 이동도 가능합니다."></canvas></div>
+  
+  <div id="quick-actions" class="quick-actions hidden" role="toolbar" aria-label="선택한 요소 바로 편집">
+   <div class="selected-description">✦ 선택한 요소를 수정해 보세요</div>
+   <button id="duplicate-quick" type="button" title="이 요소 복제">⧉ 복제</button>
+   <button id="center-quick" type="button" title="카드 중앙으로 이동">⊕ 중앙 정렬</button>
+   <button id="delete-quick" type="button" class="delete-action" title="선택한 요소 삭제">♧ 삭제</button>
+  </div>
+  <div id="edit-status" class="editor-status" aria-live="polite">✦ 사진·텍스트·스티커를 추가하면 이곳에서 바로 조작할 수 있어요.</div>
+  <div class="stage-bottom"><span id="ratio-label">포토카드 · 54 × 86 mm</span><button id="clear-select" class="small-btn">선택 해제</button><button id="clear-layers" class="small-btn">꾸미기 초기화</button></div>
+  <p id="studio-error" class="error"></p>
+ </section>
+ <aside class="right panel">
+  <h2><span class="step">03</span> 나만의 감성 더하기</h2>
+  <div class="tabs"><button class="active" data-tab="text">T · 텍스트</button><button data-tab="photo">▧ · 내 사진</button><button data-tab="sticker">☆ · 스티커</button></div>
+  <section id="tab-text" class="tab-pane"><label class="field-label" for="text-input">CARD LETTERING</label><input id="text-input" value="My little universe" maxlength="60"/><div class="color-palette"><span>원하는 글자 색을 골라주세요</span><div id="new-colors"></div></div><label class="custom-picker">🎨 직접 색상 선택 <input type="color" id="new-custom-color" value="#ffffff" aria-label="새 글자 색상 직접 선택" /></label><button id="add-text" class="primary full">+ 글자 카드에 넣기</button><p class="tip">기념일이나 이름, 작은 편지를 자유롭게 남겨보세요.</p></section>
+  <section id="tab-photo" class="tab-pane hidden"><label class="upload-box">⇧<strong>사진 올리기</strong><small>JPG · PNG · WEBP (12MB 이하)</small><input id="file" type="file" accept="image/jpeg,image/png,image/webp" /></label><div class="callout">✂ 누끼 스튜디오<br/><small>사진을 선택하고 배경을 제거할 수 있어요.</small></div><button id="open-cut" class="secondary full">✂ 자동 누끼 / 수동 편집</button><p class="tip">자동 제거는 단색 배경에 효과적입니다. 복잡한 배경은 직접 지우고 복원하세요.</p></section>
+  <section id="tab-sticker" class="tab-pane hidden"><p class="muted">귀여운 스티커를 눌러 카드에 꾸며보세요.</p><div id="stickers" class="stickers"></div></section>
+  
+  <hr/>
+  <div class="setting-head"><b>✦ 선택한 요소 편집하기</b></div>
+  <div id="no-layer" class="empty">👆 카드 위에 있는 요소를 클릭하세요.<br/>여기에 크기·색상·위치 조절 도구가 바로 표시돼요.</div>
+  <div id="layer-controls" class="layer-controls hidden">
+   <div class="edit-selection-label"><span>✦</span><span id="selected-name">요소 선택됨</span></div>
+   <div class="action-pair">
+    <button id="duplicate-layer" type="button">⧉ 복제하기</button>
+    <button id="delete-layer" type="button" class="danger">✕ 삭제하기</button>
+   </div>
+   <label for="scale">크기 <output id="scale-num">100%</output><input id="scale" type="range" min="0.25" max="3" step="0.05" value="1"/></label>
+   <label for="angle">회전 <output id="angle-num">0°</output><input id="angle" type="range" min="-180" max="180" step="5" value="0"/></label>
+   <div id="text-edit-controls" class="hidden">
+    <label class="field-label" for="edit-text">✎ 글자 내용 바꾸기</label>
+    <input id="edit-text" maxlength="60" placeholder="글자를 입력하세요" />
+    <div id="edit-colors" class="color-palette"></div>
+    <label class="custom-picker">🎨 선택한 글자 색상 직접 변경 <input id="selected-custom-color" type="color" value="#ffffff" aria-label="선택한 글자 색상 직접 변경" /></label>
+   </div>
+   <div class="position-panel">
+    <h3>⊕ 위치 맞추기 <span>정렬 & 미세 이동</span></h3>
+    <div class="arrange-actions">
+     <button id="center-x" type="button">↔ 가로 중앙</button>
+     <button id="center-y" type="button">↕ 세로 중앙</button>
+     <button id="front-layer" type="button">↑ 앞으로</button>
+     <button id="back-layer" type="button">↓ 뒤로</button>
+    </div>
+    <div class="nudge-pad" role="group" aria-label="위치 10픽셀씩 조정">
+     <span></span><button id="move-up" type="button" aria-label="위로 10픽셀 이동">↑</button><span></span>
+     <button id="move-left" type="button" aria-label="왼쪽으로 10픽셀 이동">←</button>
+     <button id="center-nudge" class="nudge-center" type="button" aria-label="가운데로 이동" title="중앙 정렬">⊕</button>
+     <button id="move-right" type="button" aria-label="오른쪽으로 10픽셀 이동">→</button>
+     <span></span><button id="move-down" type="button" aria-label="아래로 10픽셀 이동">↓</button><span></span>
+    </div>
+    <p>✧ 카드를 드래그해 중앙선에 가까이 가져가면 자동으로 정렬돼요. 키보드 방향키로도 1픽셀씩 움직일 수 있어요.</p>
+   </div>
+  </div>
+  <div class="editor-layer-panel">
+   <h3>☰ 카드에 추가한 요소</h3>
+   <p class="layer-help">수정할 글자나 사진을 누르세요. 위에 있을수록 카드 앞쪽이에요.</p>
+   <div id="layer-list" class="layer-list" aria-label="포토카드 레이어 목록"></div>
+  </div>
+  <hr/><div class="setting-head"><b>카드 테두리</b></div><div class="style-options"><button data-style="frame">✦ 별빛 프레임</button><button data-style="clean" class="active">미니멀</button></div>
+  <button id="save" class="primary full save" type="button">⇩ 포토카드 완성하고 저장</button><p class="tip centered">PNG 저장 후 나만의 기념품을 소개할게요.</p>
+ </aside>
+</main>
+<dialog id="cutout-dialog" class="dialog cut-dialog"><div class="dialog-inner"><button class="close-x" id="close-cut" aria-label="닫기">×</button><h2>✂ 누끼 스튜디오</h2><p class="muted">자동 배경 제거 후 지우개와 복원 브러시로 다듬어 주세요.</p><div class="cut-actions"><button id="auto-cut" class="secondary">✦ 자동 누끼 (단색 배경)</button><button id="erase-mode" class="primary">지우개</button><button id="restore-mode" class="secondary">복원</button></div><div class="cut-settings"><label>브러시 크기 <span id="brush-label">24</span>px<input id="brush" type="range" min="5" max="80" value="24"/></label><label>자동 제거 민감도 <span id="tolerance-label">60</span><input id="tolerance" type="range" min="15" max="145" step="5" value="60"/></label></div><div class="cut-preview"><canvas id="cut-canvas"></canvas></div><div class="dialog-buttons"><button id="reset-cut" class="secondary">원본 복원</button><button id="apply-cut" class="primary">✓ 누끼 적용하기</button></div></div></dialog>
+<dialog id="promo-dialog" class="dialog promo-dialog"><div class="dialog-inner promo-inner"><h2>방금 만든 포토카드<br/><em>키링으로 달고다니고싶지 않으세요?</em></h2><p class="muted">화면 속 우주를 작은 선물로 간직해보세요.</p><img src="./assets/promo.svg" alt="직접 제작한 기억 CD와 우주 포토카드 키링 홍보 이미지"/><small class="promo-label">TAPMOMENT · MEMORY CD & KEYRING</small><a href="https://tapmoment-shop.ddogy503.chatgpt.site/" target="_blank" rel="noopener noreferrer" class="primary full btn-link">기억 CD 구경하기 ↗</a><button id="close-promo" class="secondary full">닫기 · 처음 화면으로</button></div></dialog>
+</div>
+<script>
+/** Orbit Keepsake — client-only graphics and personal image processing.
+ * No photo data, text, or birthday is transmitted except the month/day NASA lookup.
+ */
+const $ = (q) => document.querySelector(q);
+const $$ = (q) => [...document.querySelectorAll(q)];
+const ratios = {
+  photocard: { w: 540, h: 860, label: '포토카드 · 54 × 86 mm' },
+  square: { w: 640, h: 640, label: '정사각형 · 1:1' },
+  portrait: { w: 600, h: 800, label: '세로형 · 3:4' },
+  landscape: { w: 640, h: 480, label: '가로형 · 4:3' },
+  story: { w: 540, h: 960, label: '스토리 · 9:16' }
+};
+const colors = ['#ffffff', '#ded1ff', '#ffcfdf', '#ffdf94', '#b6edfa', '#1c2035'];
+const stickerSymbols = ['✦','☾','☆','♡','🪐','✨','🌙','💜','🎀','🦋','⭐','☁️','🌸','🧸','💫','♥'];
+const state = { month: 7, day: 19, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
+const NASA_IMAGE_BASE = 'https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/';
+let birthdayArchivePromise = null;
+async function getBirthdayArchive() {
+  if (!birthdayArchivePromise) {
+    birthdayArchivePromise = (async () => {
+      const response = await fetch('./hubble-data.b64');
+      if (!response.ok) throw Error('허블 사진 데이터 파일을 불러오지 못했어요. GitHub에 hubble-data.b64가 있는지 확인해 주세요.');
+      if (!('DecompressionStream' in window)) throw Error('현재 브라우저는 생일 사진 데이터를 읽을 수 없어요. 최신 크롬 또는 사파리를 사용해 주세요.');
+      const encoded = (await response.text()).trim();
+      const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      return JSON.parse(await new Response(stream).text());
+    })().catch(e => { birthdayArchivePromise = null; throw e; });
+  }
+  return birthdayArchivePromise;
+}
+function getBirthdayPhotos(archive, month, day) {
+  const rows = archive[month + '-' + day] || [];
+  const scored = rows
+    .map(([file,name,source,observedYear,score]) => ({
+      image: NASA_IMAGE_BASE + encodeURIComponent(file),
+      name: name || 'Hubble image',
+      description: 'NASA 허블망원경의 실제 천체 관측 사진입니다. 자세한 내용은 NASA 원본 페이지를 참고하세요.',
+      source: source || 'https://science.nasa.gov/mission/hubble/',
+      observedYear,
+      score: Number(score) || 0
+    }))
+    .filter(photo => photo.score > 0)
+    .sort((a,b) => b.score - a.score);
+  return scored.slice(0, 5);
+}
+const card = $('#card'), cutCanvas = $('#cut-canvas');
+let dragSession = null, alignmentGuides = null, painting = false, basePixels = null;
+let undoStack = [], redoStack = [];
+const MAX_HISTORY = 35;
+function checkpoint() {
+  undoStack.push({
+    layers: state.layers.map(l => ({...l})), selected: state.selected,
+    style: state.style, ratio: state.ratio
+  });
+  if (undoStack.length > MAX_HISTORY) undoStack.shift();
+  redoStack = [];
+  updateHistoryButtons();
+}
+function present() { return {layers:state.layers.map(l=>({...l})),selected:state.selected,style:state.style,ratio:state.ratio}; }
+function restore(s) {
+  state.layers=s.layers.map(l=>({...l}));state.selected=s.selected;
+  state.style=s.style;state.ratio=s.ratio;
+  alignmentGuides=null;dragSession=null;
+  renderRatios();syncFrameButtons();updateSelection();
+}
+function undo() {
+  if(!undoStack.length)return;
+  redoStack.push(present());restore(undoStack.pop());updateHistoryButtons();showStatus('한 단계 되돌렸어요');
+}
+function redo() {
+  if(!redoStack.length)return;
+  undoStack.push(present());restore(redoStack.pop());updateHistoryButtons();showStatus('다시 적용했어요');
+}
+function updateHistoryButtons(){
+  $('#history-undo').disabled=undoStack.length===0;
+  $('#history-redo').disabled=redoStack.length===0;
+}
+function showStatus(text) {
+  const status=$('#edit-status');if(status)status.textContent=text;
+}
+const error = (message, studio = true) => { $(studio ? '#studio-error' : '#home-error').textContent = message || ''; };
+const el = (tag, attrs = {}, text) => { const node = document.createElement(tag); Object.entries(attrs).forEach(([key, value]) => { if (key === 'class') node.className = value; else node.setAttribute(key, value); }); if (text !== undefined) node.textContent = text; return node; };
+
+function initDate() {
+  const month = $('#month'), day = $('#day');
+  for (let m = 1; m <= 12; m++) month.add(new Option(m + '월', String(m)));
+  month.value = '7';
+  const updateDays = () => {
+    state.month = Number(month.value);
+    const count = new Date(2024, state.month, 0).getDate();
+    const old = Math.min(Number(day.value) || state.day || 1, count);
+    day.replaceChildren();
+    for (let d = 1; d <= count; d++) day.add(new Option(d + '일', String(d)));
+    day.value = String(old); state.day = old;
+  };
+  month.addEventListener('change', updateDays); day.addEventListener('change', () => state.day = Number(day.value));
+  updateDays(); day.value = '19'; state.day = 19;
+}
+async function start() {
+  if (state.busy) return;
+  error('', false); state.busy = true;
+  $('#start').disabled = true; $('#start').textContent = 'NASA 사진 찾는 중…';
+  try {
+    const archive = await getBirthdayArchive();
+    const photos = getBirthdayPhotos(archive, state.month, state.day);
+    if (!photos.length) throw Error('선택한 날짜의 허블 자료에는 은하·성운·행성 사진이 없어요. 다른 날짜를 선택해 주세요.');
+    state.photos = photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean'; undoStack=[]; redoStack=[]; updateHistoryButtons();
+    $('#home').classList.add('hidden'); $('#studio').classList.remove('hidden');
+    $('#birthday-label').textContent = state.month + '월 ' + state.day + '일';
+    $('#clear-layers').disabled = false;
+    renderRatios(); renderPhotos(); updateSelection(); choosePhoto(0); window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) { error(e.message || '연결 오류', false); }
+  finally { state.busy = false; $('#start').disabled = false; $('#start').textContent = '내 생일의 우주 만나기 →'; }
+}
+function reset() {
+  if ($('#promo-dialog').open) $('#promo-dialog').close();
+  if ($('#cutout-dialog').open) $('#cutout-dialog').close();
+  state.photos = []; state.layers = []; state.selected = null; state.bg = null; state.photo = 0; state.imageRequest++; undoStack=[];redoStack=[];alignmentGuides=null;dragSession=null;updateHistoryButtons();
+  $('#home').classList.remove('hidden'); $('#studio').classList.add('hidden');
+  error(''); error('', false); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function renderPhotos() {
+  const list = $('#photo-list'); list.replaceChildren();
+  state.photos.forEach((p, i) => {
+    const btn = el('button', { type: 'button', class: 'photo-option' + (state.photo === i ? ' active' : '') });
+    const img = el('img', { src: p.image, loading: 'lazy', alt: p.name });
+    const texts = el('span');
+    texts.append(el('strong', {}, p.name), el('small', {}, p.observedYear ? '관측 ' + p.observedYear + '년' : '관측 연도 미상'));
+    btn.append(img, texts); if (state.photo === i) btn.append(el('span', { class: 'check' }, '✓'));
+    btn.addEventListener('click', () => choosePhoto(i)); list.append(btn);
+  });
+}
+function choosePhoto(i) {
+  state.photo = i; renderPhotos(); error('');
+  const p = state.photos[i]; if (!p) return;
+  const box = $('#nasa-info'); box.replaceChildren();
+  const source = el('a', { href: /^https:\/\//.test(p.source) ? p.source : 'https://science.nasa.gov/mission/hubble/', target: '_blank', rel: 'noopener noreferrer' }, 'NASA 원본과 설명 보기 ↗');
+  box.append(el('strong', {}, p.name), el('p', {}, p.description), source);
+  const serial = ++state.imageRequest;
+  state.bg = null; render();
+  const img = new Image(); img.crossOrigin = 'anonymous';
+  img.onload = () => { if (serial === state.imageRequest) { state.bg = img; render(); } };
+  img.onerror = () => { if (serial === state.imageRequest) error('이 사진을 가져오지 못했어요. 다른 사진을 선택해 주세요.'); };
+  img.referrerPolicy = 'no-referrer'; img.src = p.image;
+}
+function renderRatios() {
+  const parent = $('#ratios'); parent.replaceChildren();
+  for (const [name, ratio] of Object.entries(ratios)) {
+    const btn = el('button', { class: 'ratio-btn' + (name === state.ratio ? ' active' : '') });
+    const symbol = el('span', { class: 'ratio-symbol' }); symbol.style.aspectRatio = ratio.w + '/' + ratio.h;
+    btn.append(symbol, document.createTextNode(ratio.label.split(' · ')[0]));
+    btn.onclick = () => { if(state.ratio!==name){checkpoint();state.ratio=name;renderRatios();render();} };
+    parent.append(btn);
+  }
+}
+function cardDraw(canvas, exportMode = false) {
+  const { w, h } = ratios[state.ratio], factor = exportMode ? 4 : Math.max(1, Math.ceil(window.devicePixelRatio || 1));
+  canvas.width = Math.round(w * factor); canvas.height = Math.round(h * factor);
+  const ctx = canvas.getContext('2d'); ctx.setTransform(factor, 0, 0, factor, 0, 0); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#20264c'); grad.addColorStop(.55, '#161c3e'); grad.addColorStop(1, '#3d284f');
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+  if (state.bg?.complete && state.bg.naturalWidth) {
+    const img = state.bg, s = Math.max(w / img.naturalWidth, h / img.naturalHeight), dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  } else {
+    for (let i = 0; i < 120; i++) { ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${.17 + .1 * (i % 7)})`; ctx.arc((i * 151.17) % w, (i * 239.91) % h, i % 5 ? 1.2 : 2.2, 0, 2 * Math.PI); ctx.fill(); }
+  }
+  const shade = ctx.createLinearGradient(0, 0, 0, h);
+  shade.addColorStop(0, 'rgba(7,12,31,.18)'); shade.addColorStop(.45, 'rgba(7,12,31,0)'); shade.addColorStop(1, 'rgba(7,12,31,.6)');
+  ctx.fillStyle = shade; ctx.fillRect(0, 0, w, h);
+  if (state.style === 'frame') {
+    ctx.strokeStyle = 'rgba(255,255,255,.87)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(24, 24, w - 48, h - 48);
+  }
+  for (const item of state.layers) {
+    ctx.save(); ctx.translate(item.x * w, item.y * h); ctx.rotate(item.angle * Math.PI / 180);
+    let bw = 180 * item.scale, bh = bw;
+    if (item.kind === 'photo' && item.image?.naturalWidth) {
+      const img = item.image, r = img.naturalWidth / img.naturalHeight;
+      bw = (r >= 1 ? 225 : 225 * r) * item.scale; bh = (r >= 1 ? 225 / r : 225) * item.scale;
+      ctx.drawImage(img, -bw / 2, -bh / 2, bw, bh);
+    } else if (item.kind === 'text') {
+      const size = 46 * item.scale;
+      ctx.font = '700 ' + size + 'px "Noto Sans KR", sans-serif'; ctx.fillStyle = item.color || '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = '#0009'; ctx.shadowBlur = 7; ctx.fillText(item.text || 'My universe', 0, 0, w * .83); ctx.shadowBlur = 0;
+      bw = Math.min(ctx.measureText(item.text || 'My universe').width, w * .83); bh = size * 1.3;
+    } else if (item.kind === 'sticker') {
+      const size = 90 * item.scale; ctx.font = size + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(item.text || '✦', 0, 0); bw = bh = size;
+    }
+    if (!exportMode && state.selected === item.id) {
+      const sx=-bw/2-12, sy=-bh/2-12, sw=bw+24, sh=bh+24;
+      ctx.shadowBlur=0;ctx.strokeStyle='#ffffff';ctx.lineWidth=3;
+      ctx.strokeRect(sx,sy,sw,sh);ctx.strokeStyle='#958dff';ctx.lineWidth=2;
+      ctx.strokeRect(sx-2,sy-2,sw+4,sh+4);
+      ctx.fillStyle='#fff';ctx.strokeStyle='#847dff';ctx.lineWidth=2;
+      for(const [hx,hy] of [[sx,sy],[sx+sw,sy],[sx,sy+sh],[sx+sw,sy+sh]]){
+        ctx.beginPath();ctx.arc(hx,hy,7,0,Math.PI*2);ctx.fill();ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+  if (!exportMode && alignmentGuides) {
+    ctx.save();ctx.setLineDash([10,7]);ctx.lineWidth=2;
+    ctx.strokeStyle='#7ef7e4';ctx.shadowColor='#3cfff3';ctx.shadowBlur=8;
+    if(alignmentGuides.x!==null){const x=alignmentGuides.x*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    if(alignmentGuides.y!==null){const y=alignmentGuides.y*h;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    ctx.restore();
+  }
+}
+function render() {
+  cardDraw(card);
+  const r = ratios[state.ratio]; card.style.aspectRatio = r.w + '/' + r.h;
+  $('#ratio-label').textContent = r.label;
+}
+function layerName(l) {
+  return l.kind==='photo'?'📷 업로드한 사진':l.kind==='sticker'?'✦ 스티커 '+(l.text||''): 'T '+(l.text||'텍스트').slice(0,23);
+}
+function updateLayerList(){
+  const list=$('#layer-list');list.replaceChildren();
+  if(!state.layers.length){list.append(el('p',{class:'layer-empty'},'아직 추가한 요소가 없어요.'));return;}
+  [...state.layers].reverse().forEach(item=>{
+    const b=el('button',{type:'button',class:'layer-entry'+(item.id===state.selected?' active':''),'aria-pressed':String(item.id===state.selected)});
+    b.append(el('span',{class:'layer-entry-icon'},item.kind==='photo'?'▧':item.kind==='text'?'T':'✦'),el('span',{},layerName(item)));
+    b.onclick=()=>{state.selected=item.id;updateSelection();};
+    list.append(b);
+  });
+}
+function syncFrameButtons(){
+  $$('.style-options button').forEach(b=>b.classList.toggle('active',b.dataset.style===state.style));
+}
+function updateSelection(){
+  const active=activeLayer(),yes=!!active;
+  $('#layer-controls').classList.toggle('hidden',!yes);
+  $('#no-layer').classList.toggle('hidden',yes);
+  $('#quick-actions').classList.toggle('hidden',!yes);
+  $('#delete-layer').disabled=!yes;
+  $('#duplicate-layer').disabled=!yes;
+  $('#open-cut').disabled=!yes||active.kind!=='photo';
+  $('#text-edit-controls').classList.toggle('hidden',!yes||active.kind!=='text');
+  $('#selected-name').textContent=yes?layerName(active):'요소를 선택해 주세요';
+  if(active){
+    $('#scale').value=active.scale;$('#angle').value=active.angle;
+    $('#scale-num').textContent=Math.round(active.scale*100)+'%';
+    $('#angle-num').textContent=active.angle+'°';
+    if(active.kind==='text'){
+      $('#edit-text').value=active.text||'';
+      $('#selected-custom-color').value=/^#[\da-fA-F]{6}$/.test(active.color||'')?active.color:'#ffffff';
+      paintPalette('#edit-colors',active.color,(c)=>{checkpoint();active.color=c;updateSelection();});
+    }
+  }
+  updateLayerList();updateHistoryButtons();render();
+}
+function activeLayer(){return state.layers.find(x=>x.id===state.selected)||null;}
+function addLayer(layer) {
+  checkpoint();
+  const item={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),x:.5,y:.5,scale:1,angle:0,...layer};
+  state.layers.push(item);state.selected=item.id;updateSelection();
+  showStatus('추가했어요! 카드를 드래그해 위치를 바꿔보세요.');
+}
+function removeSelected(){
+  if(!activeLayer())return;
+  checkpoint();state.layers=state.layers.filter(l=>l.id!==state.selected);
+  state.selected=null;updateSelection();showStatus('삭제했어요 · ↶ 버튼으로 되돌릴 수 있어요');
+}
+function duplicateSelected(){
+  const item=activeLayer();if(!item)return;
+  checkpoint();const copy={...item,id:String(Date.now())+'-copy',x:Math.min(.95,item.x+.05),y:Math.min(.95,item.y+.05)};
+  state.layers.push(copy);state.selected=copy.id;updateSelection();showStatus('복제했어요');
+}
+function centerSelected(axis='both'){
+  const item=activeLayer();if(!item)return;
+  checkpoint();if(axis==='both'||axis==='x')item.x=.5;
+  if(axis==='both'||axis==='y')item.y=.5;
+  updateSelection();showStatus('카드 중앙에 정렬했어요');
+}
+function shiftSelected(dx,dy){
+  const item=activeLayer();if(!item)return;
+  checkpoint();const size=ratios[state.ratio];
+  item.x=Math.max(.01,Math.min(.99,item.x+dx/size.w));
+  item.y=Math.max(.01,Math.min(.99,item.y+dy/size.h));
+  render();
+}
+function reorderSelected(dir){
+  const ix=state.layers.findIndex(l=>l.id===state.selected);
+  if(ix<0||ix+dir<0||ix+dir>=state.layers.length)return;
+  checkpoint();const [a]=state.layers.splice(ix,1);state.layers.splice(ix+dir,0,a);
+  updateSelection();showStatus(dir>0?'앞으로 가져왔어요':'뒤로 보냈어요');
+}
+function pointerCoords(e,element=card){
+  const b=element.getBoundingClientRect();return {x:(e.clientX-b.left)/b.width,y:(e.clientY-b.top)/b.height};
+}
+function hitTest(item, x, y){
+  const r=ratios[state.ratio];let w=190*item.scale,h=70*item.scale;
+  if(item.kind==='photo'&&item.image?.naturalWidth){
+    const aspect=item.image.naturalWidth/item.image.naturalHeight;
+    w=(aspect>=1?225:225*aspect)*item.scale;h=(aspect>=1?225/aspect:225)*item.scale;
+  } else if(item.kind==='sticker'){w=h=90*item.scale;}
+  else if(item.kind==='text'){w=Math.min(r.w*.83,(item.text||'텍스트').length*25*item.scale+30);h=58*item.scale;}
+  const a=-item.angle*Math.PI/180,dx=(x-item.x)*r.w,dy=(y-item.y)*r.h;
+  const rotatedX=dx*Math.cos(a)-dy*Math.sin(a),rotatedY=dx*Math.sin(a)+dy*Math.cos(a);
+  return Math.abs(rotatedX)<w/2+15 && Math.abs(rotatedY)<h/2+15;
+}
+function snapValue(value,positions,threshold) {
+  let best=value,snap=null,dist=threshold;
+  for(const position of positions){let d=Math.abs(value-position);if(d<=dist){best=position;snap=position;dist=d;}}
+  return {value:best, guide:snap};
+}
+function getSnappedPoint(item, x, y) {
+  const b=card.getBoundingClientRect();
+  x=Math.max(0.01,Math.min(.99,x));y=Math.max(.01,Math.min(.99,y));
+  if(!$('#snap-toggle').checked)return {x,y,guides:null};
+  const other=state.layers.filter(l=>l.id!==item.id);
+  const tx=[.5,.15,.85,...other.map(l=>l.x)];
+  const ty=[.5,.15,.85,...other.map(l=>l.y)];
+  const sx=snapValue(x,tx,12/b.width),sy=snapValue(y,ty,12/b.height);
+  return {x:sx.value,y:sy.value,guides:{x:sx.guide,y:sy.guide}};
+}
+card.addEventListener('pointerdown',e=>{
+  const pos=pointerCoords(e);
+  const hit=[...state.layers].reverse().find(l=>hitTest(l,pos.x,pos.y));
+  state.selected=hit?.id||null;
+  if(hit){
+    dragSession={id:hit.id,originalX:hit.x,originalY:hit.y,offsetX:pos.x-hit.x,offsetY:pos.y-hit.y,started:false,pointerId:e.pointerId};
+    card.setPointerCapture(e.pointerId);
+    card.focus();
+  }
+  updateSelection();
+});
+card.addEventListener('pointermove',e=>{
+  if(!dragSession||dragSession.pointerId!==e.pointerId)return;
+  const item=activeLayer();if(!item||item.id!==dragSession.id)return;
+  const p=pointerCoords(e), proposedX=p.x-dragSession.offsetX,proposedY=p.y-dragSession.offsetY;
+  const dx=(proposedX-dragSession.originalX)*card.getBoundingClientRect().width;
+  const dy=(proposedY-dragSession.originalY)*card.getBoundingClientRect().height;
+  if(!dragSession.started){
+    if(Math.hypot(dx,dy)<3)return;
+    checkpoint();dragSession.started=true;
+  }
+  const value=getSnappedPoint(item,proposedX,proposedY);
+  item.x=value.x;item.y=value.y;alignmentGuides=value.guides;
+  render();
+});
+function finishDrag(){
+  if(!dragSession)return;
+  const moved=dragSession.started;dragSession=null;alignmentGuides=null;
+  render();if(moved)showStatus('위치를 옮겼어요 · ↶ 되돌리기 가능');
+}
+card.addEventListener('pointerup',finishDrag);
+card.addEventListener('pointercancel',finishDrag);
+card.addEventListener('lostpointercapture',finishDrag);
+card.addEventListener('dblclick',()=>{
+ const l=activeLayer();if(l?.kind==='text'){$('#edit-text').focus();$('#edit-text').select();}
+});
+function paintPalette(selector,chosen,callback){
+  const node=$(selector);node.replaceChildren();
+  colors.forEach(c=>{
+    const b=el('button',{type:'button',class:'color-dot'+(c===chosen?' active':''),'aria-label':'글자 색상 '+c,'aria-pressed':String(c===chosen),title:c});
+    b.style.background=c;b.onclick=()=>callback(c);node.append(b);
+  });
+}
+function setTab(tab){
+  state.tab=tab;
+  $$('.tabs button').forEach(b=>{
+    const is=b.dataset.tab===tab;
+    b.classList.toggle('active',is);b.setAttribute('aria-selected',String(is));
+  });
+  ['text','photo','sticker'].forEach(t=>$('#tab-'+t).classList.toggle('hidden',t!==tab));
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('#add-text').onclick=()=>{addLayer({kind:'text',text:$('#text-input').value||'My universe',color:state.newColor,scale:1,y:.35});$('#edit-text').focus();};
+$('#stickers').replaceChildren(...stickerSymbols.map(symbol=>{
+  const b=el('button',{title:symbol,'aria-label':'스티커 '+symbol},symbol);
+  b.onclick=()=>addLayer({kind:'sticker',text:symbol,x:.5,y:.5});
+  return b;
+}));
+$('#file').addEventListener('change',e=>{
+  const file=e.target.files?.[0];e.target.value='';if(!file)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12000000){error('JPG/PNG/WEBP 12MB 이하 파일을 사용해 주세요.');return;}
+  const reader=new FileReader();reader.onload=()=>{
+    const img=new Image();img.onload=()=>{
+      error('');addLayer({kind:'photo',image:img,y:.57,scale:1.25});
+      showStatus('사진이 추가됐어요 · 누끼가 필요하면 오른쪽 버튼을 눌러보세요.');
+    };img.onerror=()=>error('이미지를 열 수 없어요. 다른 파일을 골라 주세요.');
+    img.src=String(reader.result);
+  };reader.readAsDataURL(file);
+});
+$('#scale').addEventListener('pointerdown',()=>{if(activeLayer())checkpoint();});
+$('#angle').addEventListener('pointerdown',()=>{if(activeLayer())checkpoint();});
+$('#scale').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))checkpoint();});
+$('#angle').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))checkpoint();});
+$('#scale').oninput=e=>{const l=activeLayer();if(!l)return;l.scale=Number(e.target.value);$('#scale-num').textContent=Math.round(l.scale*100)+'%';render();};
+$('#angle').oninput=e=>{const l=activeLayer();if(!l)return;l.angle=Number(e.target.value);$('#angle-num').textContent=l.angle+'°';render();};
+$('#edit-text').addEventListener('focus',()=>{if(activeLayer()?.kind==='text')checkpoint();});
+$('#edit-text').oninput=e=>{const l=activeLayer();if(l?.kind==='text'){l.text=e.target.value;updateLayerList();render();}};
+$('#new-custom-color').onchange=e=>{state.newColor=e.target.value;renderNewPalette();};
+$('#selected-custom-color').onchange=e=>{const l=activeLayer();if(l?.kind==='text'){checkpoint();l.color=e.target.value;updateSelection();}};
+$('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
+$('#delete-layer').onclick=removeSelected;$('#delete-quick').onclick=removeSelected;
+$('#duplicate-layer').onclick=duplicateSelected;$('#duplicate-quick').onclick=duplicateSelected;
+$('#center-quick').onclick=()=>centerSelected('both');
+$('#center-nudge').onclick=()=>centerSelected('both');
+$('#center-x').onclick=()=>centerSelected('x');
+$('#center-y').onclick=()=>centerSelected('y');
+$('#front-layer').onclick=()=>reorderSelected(1);
+$('#back-layer').onclick=()=>reorderSelected(-1);
+$('#move-left').onclick=()=>shiftSelected(-10,0);
+$('#move-right').onclick=()=>shiftSelected(10,0);
+$('#move-up').onclick=()=>shiftSelected(0,-10);
+$('#move-down').onclick=()=>shiftSelected(0,10);
+$('#clear-select').onclick=()=>{state.selected=null;updateSelection();};
+$('#clear-layers').onclick=()=>{
+ if(!state.layers.length)return;
+ if(!confirm('꾸민 요소를 모두 삭제할까요? (되돌릴 수 있어요)'))return;
+ checkpoint();state.layers=[];state.selected=null;updateSelection();
+};
+$$('.style-options button').forEach(b=>b.onclick=()=>{
+ if(state.style===b.dataset.style)return;
+ checkpoint();state.style=b.dataset.style;syncFrameButtons();render();
+});
+document.addEventListener('keydown',e=>{
+ const tag=document.activeElement?.tagName?.toLowerCase();
+ const isEditing=tag==='input'||tag==='textarea'||tag==='select'||document.activeElement?.isContentEditable;
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
+ if($('#studio').classList.contains('hidden')||isEditing)return;
+ if(e.key==='Escape'&&state.selected){state.selected=null;updateSelection();return;}
+ if((e.key==='Delete'||e.key==='Backspace')&&state.selected){e.preventDefault();removeSelected();return;}
+ const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+ if(directions[e.key]&&activeLayer()){e.preventDefault();let [dx,dy]=directions[e.key];shiftSelected(dx*(e.shiftKey?10:1),dy*(e.shiftKey?10:1));}
+});
+function openCutout() {
+  const item = activeLayer(); if (!item || item.kind !== 'photo' || !item.image) return;
+  const image = item.image, scale = Math.min(1, 700 / Math.max(image.naturalWidth, image.naturalHeight));
+  cutCanvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  cutCanvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  const context = cutCanvas.getContext('2d', { willReadFrequently: true });
+  context.clearRect(0, 0, cutCanvas.width, cutCanvas.height);
+  context.drawImage(image, 0, 0, cutCanvas.width, cutCanvas.height);
+  basePixels = context.getImageData(0, 0, cutCanvas.width, cutCanvas.height);
+  setCutMode('erase'); $('#cutout-dialog').showModal();
+}
+function setCutMode(mode) {
+  state.mode = mode;
+  $('#erase-mode').className = mode === 'erase' ? 'primary' : 'secondary';
+  $('#restore-mode').className = mode === 'restore' ? 'primary' : 'secondary';
+}
+function autoCut() {
+  if (!basePixels) return;
+  const ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
+  const im = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = im.data;
+  const original = basePixels.data, w = im.width, h = im.height;
+  const tolerance = Number($('#tolerance').value);
+  const corners = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]].map(([x, y]) => {
+    const i = (y * w + x) * 4; return [original[i], original[i + 1], original[i + 2]];
+  });
+  const visited = new Uint8Array(w * h), queue = new Int32Array(w * h);
+  let head = 0, tail = 0;
+  function visit(index) {
+    if (index < 0 || index >= w * h || visited[index]) return;
+    visited[index] = 1;
+    const i = index * 4;
+    if (original[i + 3] < 10) return;
+    const ok = corners.some(([r, g, b]) => Math.hypot(original[i] - r, original[i + 1] - g, original[i + 2] - b) < tolerance);
+    if (ok) queue[tail++] = index;
+  }
+  for (let x = 0; x < w; x++) { visit(x); visit((h - 1) * w + x); }
+  for (let y = 0; y < h; y++) { visit(y * w); visit(y * w + w - 1); }
+  while (head < tail) {
+    const at = queue[head++], x = at % w, y = (at / w) | 0;
+    d[at * 4 + 3] = 0;
+    if (x > 0) visit(at - 1);
+    if (x < w - 1) visit(at + 1);
+    if (y > 0) visit(at - w);
+    if (y < h - 1) visit(at + w);
+  }
+  ctx.putImageData(im, 0, 0);
+}
+function brushAt(e) {
+  if (!basePixels) return;
+  const point = pointerCoords(e, cutCanvas), cx = Math.round(point.x * cutCanvas.width), cy = Math.round(point.y * cutCanvas.height);
+  const radius = Number($('#brush').value), ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
+  const image = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = image.data, original = basePixels.data;
+  for (let y = Math.max(0, cy - radius); y < Math.min(cutCanvas.height, cy + radius); y++) {
+    for (let x = Math.max(0, cx - radius); x < Math.min(cutCanvas.width, cx + radius); x++) {
+      if ((x - cx) ** 2 + (y - cy) ** 2 > radius ** 2) continue;
+      const index = (y * cutCanvas.width + x) * 4;
+      if (state.mode === 'erase') d[index + 3] = 0;
+      else { d[index] = original[index]; d[index + 1] = original[index + 1]; d[index + 2] = original[index + 2]; d[index + 3] = original[index + 3]; }
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+}
+cutCanvas.addEventListener('pointerdown', (e) => { painting = true; cutCanvas.setPointerCapture(e.pointerId); brushAt(e); });
+cutCanvas.addEventListener('pointermove', (e) => { if (painting) brushAt(e); });
+cutCanvas.addEventListener('pointerup', () => { painting = false; });
+cutCanvas.addEventListener('pointercancel', () => { painting = false; });
+$('#auto-cut').onclick = autoCut;
+$('#erase-mode').onclick = () => setCutMode('erase');
+$('#restore-mode').onclick = () => setCutMode('restore');
+$('#brush').oninput = (e) => { $('#brush-label').textContent = e.target.value; };
+$('#tolerance').oninput = (e) => { $('#tolerance-label').textContent = e.target.value; };
+$('#reset-cut').onclick = () => { if (basePixels) cutCanvas.getContext('2d')?.putImageData(basePixels, 0, 0); };
+$('#apply-cut').onclick = () => {
+  const item = activeLayer(); if (!item || item.kind !== 'photo') return;
+  const image = new Image();
+  image.onload = () => { checkpoint(); item.image = image; $('#cutout-dialog').close(); render(); };
+  image.src = cutCanvas.toDataURL('image/png');
+};
+$('#open-cut').onclick = openCutout;
+$('#close-cut').onclick = () => $('#cutout-dialog').close();
+
+$('#save').onclick = async () => {
+  error('');
+  if (state.photos.length && !state.bg) { error('먼저 NASA 사진이 완전히 로딩됐는지 확인해 주세요.'); return; }
+  try {
+    await document.fonts.ready;
+    const output = document.createElement('canvas'); cardDraw(output, true);
+    const data = output.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.download = 'hubble-photocard-' + String(state.month).padStart(2, '0') + '-' + String(state.day).padStart(2, '0') + '.png';
+    a.href = data; document.body.append(a); a.click(); a.remove();
+    $('#promo-dialog').showModal();
+  } catch (e) { error('파일 저장 실패: 외부 이미지 접근 권한 또는 브라우저 설정을 확인해 주세요.'); }
+};
+$('#close-promo').onclick = reset;
+$('#promo-dialog').addEventListener('close', () => { if (!$('#home').classList.contains('hidden')) return; reset(); });
+$('#brand').onclick = reset;
+$('#change-date').onclick = reset;
+$('#start').onclick = start;
+
+function renderNewPalette() { paintPalette('#new-colors', state.newColor, (c) => { state.newColor = c; $('#new-custom-color').value = c; renderNewPalette(); }); }
+renderNewPalette();
+updateHistoryButtons();
+initDate();
+
+</script>
+</body>
+</html>
