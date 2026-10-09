@@ -163,8 +163,32 @@ function choosePhoto(i) {
   state.photo = i; renderPhotos(); error('');
   const p = state.photos[i]; if (!p) return;
   const box = $('#nasa-info'); box.replaceChildren();
-  const source = el('a', { href: /^https:\/\//.test(p.source) ? p.source : 'https://science.nasa.gov/mission/hubble/', target: '_blank', rel: 'noopener noreferrer' }, 'NASA 원본과 설명 보기 ↗');
-  box.append(el('strong', {}, p.name), el('p', {}, p.description), source);
+  const summary=summarizeHubblePhoto(p);
+  const source=el('a',{href:/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/',target:'_blank',rel:'noopener noreferrer'},'NASA 원문 보기 ↗');
+  const heading=el('strong',{class:'nasa-info-heading'},summary.title);
+  const para=el('p',{class:'nasa-ko-description'},summary.description);
+  const row=el('div',{class:'nasa-info-actions'});
+  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'한국어 사진 설명 복사'},'⧉ 설명 복사');
+  copy.onclick=async()=>{
+    const content=summary.title+'\n\n'+summary.description;
+    try {
+      if(!navigator.clipboard?.writeText)throw Error('No clipboard API');
+      await navigator.clipboard.writeText(content);
+    } catch(e) {
+      const field=el('textarea',{'aria-label':'복사할 설명'});
+      field.value=content;
+      field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
+      document.body.append(field);
+      field.focus();field.select();
+      const copied=!!document.execCommand?.('copy');field.remove();
+      if(!copied){copy.textContent='길게 눌러 복사해 주세요';return;}
+    }
+    copy.textContent='✓ 복사됨';
+    setTimeout(()=>{if(copy.isConnected)copy.textContent='⧉ 설명 복사';},1800);
+  };
+  row.append(copy,source);
+  const note=el('small',{class:'nasa-ko-note'},'사진 제목을 바탕으로 풀어 쓴 설명이에요.');
+  box.append(heading,para,row,note);
   const serial = ++state.imageRequest;
   state.bg = null; render();
   const img = new Image(); img.crossOrigin = 'anonymous';
