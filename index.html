@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-hubble-ko-v1" />
+<meta name="orbit-build" content="20261009-hubble-ko-v2" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -325,6 +325,26 @@
   .nasa-info .nasa-copy-button {min-height:44px}
 }
 
+
+/* Real NASA article-backed object identity and rich observation detail */
+.nasa-info{padding:20px 17px;background:linear-gradient(155deg,#233352,#16233d);border:1px solid #5b6686;border-radius:17px;margin-bottom:24px}
+.nasa-info .nasa-subheading{display:block;color:#bfb5ff;font-size:10px;letter-spacing:.025em;font-weight:800;margin-bottom:9px}
+.nasa-info .nasa-object-name{display:block;color:#fff;font-size:17px;font-weight:850;line-height:1.55;letter-spacing:-.04em;word-break:keep-all}
+.nasa-info .nasa-scientific-name{margin:7px 0 18px;color:#aebad0;font-size:10px;line-height:1.7;overflow-wrap:anywhere}
+.nasa-info .nasa-section-title{display:block;font-size:12px;font-weight:800;color:#f4edff;line-height:1.65;margin:12px 0 7px}
+.nasa-info .nasa-ko-description{font-size:12px;line-height:1.9;color:#d7dff0;max-height:none;overflow:visible;margin:4px 0 14px;user-select:text;-webkit-user-select:text;word-break:keep-all}
+.nasa-info .nasa-fact-title{padding-top:14px;border-top:1px solid #4b5474;margin-top:14px}
+.nasa-info .nasa-source-description{white-space:pre-line;word-break:keep-all;color:#d7e6ed;line-height:1.9;font-size:12px;max-height:370px;overflow-y:auto;scrollbar-color:#8587b9 transparent;padding:4px 0 6px;user-select:text;-webkit-user-select:text}
+.nasa-info .nasa-info-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:17px}
+.nasa-info .nasa-info-actions .nasa-copy-button{min-height:41px;font-size:12px;padding:9px 14px;font-weight:800}
+.nasa-info .nasa-ko-note{margin-top:10px;font-size:10px;color:#98a7c0;line-height:1.65;display:block}
+@media(max-width:680px){
+ .nasa-info .nasa-object-name{font-size:18px}
+ .nasa-info .nasa-source-description{max-height:none;overflow:visible;font-size:13px;line-height:1.95}
+ .nasa-info .nasa-ko-description{font-size:13px}
+ .nasa-info .nasa-info-actions .nasa-copy-button{min-height:47px}
+}
+
 </style>
 </head>
 <body>
@@ -639,31 +659,76 @@ function choosePhoto(i) {
   const p = state.photos[i]; if (!p) return;
   const box = $('#nasa-info'); box.replaceChildren();
   const summary=summarizeHubblePhoto(p);
-  const source=el('a',{href:/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/',target:'_blank',rel:'noopener noreferrer'},'NASA 원문 보기 ↗');
-  const heading=el('strong',{class:'nasa-info-heading'},summary.title);
+  const sourceURL=/^https:\/\//.test(p.source)?p.source:'https://science.nasa.gov/mission/hubble/';
+  const source=el('a',{href:sourceURL,target:'_blank',rel:'noopener noreferrer'},'NASA 원본 자료 ↗');
+  const label=el('span',{class:'nasa-subheading'},'✦ 사진에 담긴 실제 천체');
+  const object=el('strong',{class:'nasa-object-name'},summary.title);
+  const scientific=el('div',{class:'nasa-scientific-name'},'NASA 사진명 · '+p.name);
+  const descriptionLabel=el('strong',{class:'nasa-section-title'},'이 사진은 무엇을 보여 줄까?');
   const para=el('p',{class:'nasa-ko-description'},summary.description);
-  const row=el('div',{class:'nasa-info-actions'});
-  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'한국어 사진 설명 복사'},'⧉ 설명 복사');
+  const factLabel=el('strong',{class:'nasa-section-title nasa-fact-title'},'NASA 원문에서 확인한 내용');
+  const facts=el('div',{class:'nasa-source-description'},'NASA 원본 설명을 읽어오는 중이에요…');
+  const note=el('small',{class:'nasa-ko-note'},'NASA 원문 설명을 불러와 한국어로 자동 번역해요. 번역 내용은 원문과 함께 확인할 수 있어요.');
+  const actions=el('div',{class:'nasa-info-actions'});
+  const copy=el('button',{type:'button',class:'nasa-copy-button','aria-label':'현재 사진의 천체 이름과 설명 복사'},'⧉ 설명 복사');
   copy.onclick=async()=>{
-    const content=summary.title+'\n\n'+summary.description;
-    try {
-      if(!navigator.clipboard?.writeText)throw Error('No clipboard API');
+    const content=[object.textContent,scientific.textContent,descriptionLabel.textContent,para.textContent,
+      facts.hidden?'':factLabel.textContent+'\n'+facts.textContent].filter(Boolean).join('\n\n');
+    try{
+      if(!navigator.clipboard?.writeText)throw Error('Clipboard API unavailable');
       await navigator.clipboard.writeText(content);
-    } catch(e) {
-      const field=el('textarea',{'aria-label':'복사할 설명'});
-      field.value=content;
-      field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';
-      document.body.append(field);
-      field.focus();field.select();
-      const copied=!!document.execCommand?.('copy');field.remove();
-      if(!copied){copy.textContent='길게 눌러 복사해 주세요';return;}
+    }catch(err){
+      const field=el('textarea',{'aria-label':'설명 복사용 입력창'});
+      field.value=content;field.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.append(field);field.focus();field.select();
+      const success=!!document.execCommand?.('copy');field.remove();
+      if(!success){copy.textContent='설명을 길게 눌러 복사해 주세요';return;}
     }
-    copy.textContent='✓ 복사됨';
+    copy.textContent='✓ 복사 완료';
     setTimeout(()=>{if(copy.isConnected)copy.textContent='⧉ 설명 복사';},1800);
   };
-  row.append(copy,source);
-  const note=el('small',{class:'nasa-ko-note'},'사진 제목을 바탕으로 풀어 쓴 설명이에요.');
-  box.append(heading,para,row,note);
+  actions.append(copy,source);
+  box.append(label,object,scientific,descriptionLabel,para,factLabel,facts,actions,note);
+  const selectionId=state.imageRequest+1;
+  (async()=>{
+    if(!/^https:\/\/(?:science\.nasa\.gov|(?:www\.)?nasa\.gov|(?:www\.)?hubblesite\.org|(?:www\.)?esahubble\.org|(?:www\.)?spacetelescope\.org)\//i.test(sourceURL)){
+      facts.textContent='이 사진의 NASA 원본 주소를 확인할 수 없어서 추가 설명을 불러오지 못했어요.';
+      note.textContent='위 설명은 사진 제목을 바탕으로 작성했어요. NASA 원본 자료를 확인해 주세요.';
+      return;
+    }
+    try{
+      const cfg=window.PRINT_CONFIG||{};
+      if(!cfg.supabaseUrl)throw Error('원문 확인 서버 주소가 없습니다');
+      const controller=new AbortController();
+      const wait=setTimeout(()=>controller.abort(),25000);
+      let response;
+      try {
+        response=await fetch(cfg.supabaseUrl.replace(/\/$/,'')+'/functions/v1/hubble-caption',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({source:sourceURL,name:p.name}),signal:controller.signal
+        });
+      } finally {clearTimeout(wait);}
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||result.error)throw Error(result.error||'NASA 설명을 불러오지 못했어요');
+      if(state.imageRequest!==selectionId)return;
+      if(result.titleKorean&&result.titleKorean.length>=4&&!summary.title.includes('베딘 1'))
+        object.textContent=result.titleKorean;
+      else if(result.title&&result.title!==p.name&&!summary.title.includes('베딘 1'))
+        object.textContent=summary.title+' · '+result.title;
+      if(result.title)scientific.textContent='NASA 공식 대상명 · '+result.title;
+      if(result.description&&/[가-힣]/.test(result.description)){
+        facts.textContent=result.description;
+        note.textContent='NASA 원본 페이지에서 가져온 내용을 한국어로 자동 번역했습니다. 정확한 과학적 표현은 원문에서 확인해 주세요.';
+      }else{
+        facts.textContent='NASA 원문 자동 번역이 현재 제공되지 않아요. 위의 한국어 설명과 NASA 원본 링크를 참고해 주세요.';
+        note.textContent='번역 연결이 실패해 NASA에서 확인하지 않은 세부 정보는 추가하지 않았어요.';
+      }
+    }catch(err){
+      if(state.imageRequest!==selectionId)return;
+      facts.textContent='NASA 원문 설명을 지금 불러오지 못했어요. 아래에서 NASA 공식 페이지를 직접 확인할 수 있어요.';
+      note.textContent='위 한국어 설명은 사진 제목을 바탕으로 작성했어요. 원문을 불러오면 추가 정보가 표시됩니다.';
+    }
+  })();
   const serial = ++state.imageRequest;
   state.bg = null; render();
   const img = new Image(); img.crossOrigin = 'anonymous';
