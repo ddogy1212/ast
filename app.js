@@ -401,6 +401,7 @@ $('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
 $('#delete-layer').onclick=removeSelected;$('#delete-quick').onclick=removeSelected;
 $('#duplicate-layer').onclick=duplicateSelected;$('#duplicate-quick').onclick=duplicateSelected;
 $('#center-quick').onclick=()=>centerSelected('both');
+$('#center-nudge').onclick=()=>centerSelected('both');
 $('#center-x').onclick=()=>centerSelected('x');
 $('#center-y').onclick=()=>centerSelected('y');
 $('#front-layer').onclick=()=>reorderSelected(1);
