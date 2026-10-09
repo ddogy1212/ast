@@ -45,7 +45,40 @@ function getBirthdayPhotos(archive, month, day) {
   return scored.slice(0, 5);
 }
 const card = $('#card'), cutCanvas = $('#cut-canvas');
-let dragId = null, painting = false, basePixels = null;
+let dragSession = null, alignmentGuides = null, painting = false, basePixels = null;
+let undoStack = [], redoStack = [];
+const MAX_HISTORY = 35;
+function checkpoint() {
+  undoStack.push({
+    layers: state.layers.map(l => ({...l})), selected: state.selected,
+    style: state.style, ratio: state.ratio
+  });
+  if (undoStack.length > MAX_HISTORY) undoStack.shift();
+  redoStack = [];
+  updateHistoryButtons();
+}
+function present() { return {layers:state.layers.map(l=>({...l})),selected:state.selected,style:state.style,ratio:state.ratio}; }
+function restore(s) {
+  state.layers=s.layers.map(l=>({...l}));state.selected=s.selected;
+  state.style=s.style;state.ratio=s.ratio;
+  alignmentGuides=null;dragSession=null;
+  renderRatios();syncFrameButtons();updateSelection();
+}
+function undo() {
+  if(!undoStack.length)return;
+  redoStack.push(present());restore(undoStack.pop());updateHistoryButtons();showStatus('한 단계 되돌렸어요');
+}
+function redo() {
+  if(!redoStack.length)return;
+  undoStack.push(present());restore(redoStack.pop());updateHistoryButtons();showStatus('다시 적용했어요');
+}
+function updateHistoryButtons(){
+  $('#history-undo').disabled=undoStack.length===0;
+  $('#history-redo').disabled=redoStack.length===0;
+}
+function showStatus(text) {
+  const status=$('#edit-status');if(status)status.textContent=text;
+}
 const error = (message, studio = true) => { $(studio ? '#studio-error' : '#home-error').textContent = message || ''; };
 const el = (tag, attrs = {}, text) => { const node = document.createElement(tag); Object.entries(attrs).forEach(([key, value]) => { if (key === 'class') node.className = value; else node.setAttribute(key, value); }); if (text !== undefined) node.textContent = text; return node; };
 
@@ -72,7 +105,7 @@ async function start() {
     const archive = await getBirthdayArchive();
     const photos = getBirthdayPhotos(archive, state.month, state.day);
     if (!photos.length) throw Error('선택한 날짜의 허블 자료에는 은하·성운·행성 사진이 없어요. 다른 날짜를 선택해 주세요.');
-    state.photos = photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean';
+    state.photos = photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean'; undoStack=[]; redoStack=[]; updateHistoryButtons();
     $('#home').classList.add('hidden'); $('#studio').classList.remove('hidden');
     $('#birthday-label').textContent = state.month + '월 ' + state.day + '일';
     $('#clear-layers').disabled = false;
@@ -83,7 +116,7 @@ async function start() {
 function reset() {
   if ($('#promo-dialog').open) $('#promo-dialog').close();
   if ($('#cutout-dialog').open) $('#cutout-dialog').close();
-  state.photos = []; state.layers = []; state.selected = null; state.bg = null; state.photo = 0; state.imageRequest++;
+  state.photos = []; state.layers = []; state.selected = null; state.bg = null; state.photo = 0; state.imageRequest++; undoStack=[];redoStack=[];alignmentGuides=null;dragSession=null;updateHistoryButtons();
   $('#home').classList.remove('hidden'); $('#studio').classList.add('hidden');
   error(''); error('', false); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -117,7 +150,7 @@ function renderRatios() {
     const btn = el('button', { class: 'ratio-btn' + (name === state.ratio ? ' active' : '') });
     const symbol = el('span', { class: 'ratio-symbol' }); symbol.style.aspectRatio = ratio.w + '/' + ratio.h;
     btn.append(symbol, document.createTextNode(ratio.label.split(' · ')[0]));
-    btn.onclick = () => { state.ratio = name; renderRatios(); render(); };
+    btn.onclick = () => { if(state.ratio!==name){checkpoint();state.ratio=name;renderRatios();render();} };
     parent.append(btn);
   }
 }
@@ -158,91 +191,245 @@ function cardDraw(canvas, exportMode = false) {
       const size = 90 * item.scale; ctx.font = size + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(item.text || '✦', 0, 0); bw = bh = size;
     }
     if (!exportMode && state.selected === item.id) {
-      ctx.strokeStyle = '#d6ceff'; ctx.lineWidth = 2.5; ctx.setLineDash([8, 5]); ctx.strokeRect(-bw / 2 - 11, -bh / 2 - 11, bw + 22, bh + 22); ctx.setLineDash([]);
+      const sx=-bw/2-12, sy=-bh/2-12, sw=bw+24, sh=bh+24;
+      ctx.shadowBlur=0;ctx.strokeStyle='#ffffff';ctx.lineWidth=3;
+      ctx.strokeRect(sx,sy,sw,sh);ctx.strokeStyle='#958dff';ctx.lineWidth=2;
+      ctx.strokeRect(sx-2,sy-2,sw+4,sh+4);
+      ctx.fillStyle='#fff';ctx.strokeStyle='#847dff';ctx.lineWidth=2;
+      for(const [hx,hy] of [[sx,sy],[sx+sw,sy],[sx,sy+sh],[sx+sw,sy+sh]]){
+        ctx.beginPath();ctx.arc(hx,hy,7,0,Math.PI*2);ctx.fill();ctx.stroke();
+      }
     }
     ctx.restore();
   }
-
+  if (!exportMode && alignmentGuides) {
+    ctx.save();ctx.setLineDash([10,7]);ctx.lineWidth=2;
+    ctx.strokeStyle='#7ef7e4';ctx.shadowColor='#3cfff3';ctx.shadowBlur=8;
+    if(alignmentGuides.x!==null){const x=alignmentGuides.x*w;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    if(alignmentGuides.y!==null){const y=alignmentGuides.y*h;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    ctx.restore();
+  }
 }
 function render() {
   cardDraw(card);
   const r = ratios[state.ratio]; card.style.aspectRatio = r.w + '/' + r.h;
   $('#ratio-label').textContent = r.label;
 }
-function addLayer(layer) {
-  const item = { id: String(Date.now()) + '-' + Math.random().toString(36).slice(2), x: .5, y: .56, scale: 1, angle: 0, ...layer };
-  state.layers.push(item); state.selected = item.id;
-  updateSelection(); render();
+function layerName(l) {
+  return l.kind==='photo'?'📷 업로드한 사진':l.kind==='sticker'?'✦ 스티커 '+(l.text||''): 'T '+(l.text||'텍스트').slice(0,23);
 }
-function activeLayer() { return state.layers.find((x) => x.id === state.selected) || null; }
-function updateSelection() {
-  const active = activeLayer();
-  $('#layer-controls').classList.toggle('hidden', !active);
-  $('#no-layer').classList.toggle('hidden', !!active);
-  $('#delete-layer').disabled = !active;
-  $('#open-cut').disabled = !active || active.kind !== 'photo';
-  $('#text-edit-controls').classList.toggle('hidden', !active || active.kind !== 'text');
-  if (active) {
-    $('#scale').value = active.scale; $('#angle').value = active.angle;
-    $('#scale-num').textContent = Math.round(active.scale * 100) + '%'; $('#angle-num').textContent = active.angle + '°';
-    if (active.kind === 'text') { $('#edit-text').value = active.text || ''; paintPalette('#edit-colors', active.color, (c) => { active.color = c; updateSelection(); render(); }); }
+function updateLayerList(){
+  const list=$('#layer-list');list.replaceChildren();
+  if(!state.layers.length){list.append(el('p',{class:'layer-empty'},'아직 추가한 요소가 없어요.'));return;}
+  [...state.layers].reverse().forEach(item=>{
+    const b=el('button',{type:'button',class:'layer-entry'+(item.id===state.selected?' active':''),'aria-pressed':String(item.id===state.selected)});
+    b.append(el('span',{class:'layer-entry-icon'},item.kind==='photo'?'▧':item.kind==='text'?'T':'✦'),el('span',{},layerName(item)));
+    b.onclick=()=>{state.selected=item.id;updateSelection();};
+    list.append(b);
+  });
+}
+function syncFrameButtons(){
+  $$('.style-options button').forEach(b=>b.classList.toggle('active',b.dataset.style===state.style));
+}
+function updateSelection(){
+  const active=activeLayer(),yes=!!active;
+  $('#layer-controls').classList.toggle('hidden',!yes);
+  $('#no-layer').classList.toggle('hidden',yes);
+  $('#quick-actions').classList.toggle('hidden',!yes);
+  $('#delete-layer').disabled=!yes;
+  $('#duplicate-layer').disabled=!yes;
+  $('#open-cut').disabled=!yes||active.kind!=='photo';
+  $('#text-edit-controls').classList.toggle('hidden',!yes||active.kind!=='text');
+  $('#selected-name').textContent=yes?layerName(active):'요소를 선택해 주세요';
+  if(active){
+    $('#scale').value=active.scale;$('#angle').value=active.angle;
+    $('#scale-num').textContent=Math.round(active.scale*100)+'%';
+    $('#angle-num').textContent=active.angle+'°';
+    if(active.kind==='text'){
+      $('#edit-text').value=active.text||'';
+      $('#selected-custom-color').value=/^#[\da-fA-F]{6}$/.test(active.color||'')?active.color:'#ffffff';
+      paintPalette('#edit-colors',active.color,(c)=>{checkpoint();active.color=c;updateSelection();});
+    }
   }
+  updateLayerList();updateHistoryButtons();render();
+}
+function activeLayer(){return state.layers.find(x=>x.id===state.selected)||null;}
+function addLayer(layer) {
+  checkpoint();
+  const item={id:String(Date.now())+'-'+Math.random().toString(36).slice(2),x:.5,y:.5,scale:1,angle:0,...layer};
+  state.layers.push(item);state.selected=item.id;updateSelection();
+  showStatus('추가했어요! 카드를 드래그해 위치를 바꿔보세요.');
+}
+function removeSelected(){
+  if(!activeLayer())return;
+  checkpoint();state.layers=state.layers.filter(l=>l.id!==state.selected);
+  state.selected=null;updateSelection();showStatus('삭제했어요 · ↶ 버튼으로 되돌릴 수 있어요');
+}
+function duplicateSelected(){
+  const item=activeLayer();if(!item)return;
+  checkpoint();const copy={...item,id:String(Date.now())+'-copy',x:Math.min(.95,item.x+.05),y:Math.min(.95,item.y+.05)};
+  state.layers.push(copy);state.selected=copy.id;updateSelection();showStatus('복제했어요');
+}
+function centerSelected(axis='both'){
+  const item=activeLayer();if(!item)return;
+  checkpoint();if(axis==='both'||axis==='x')item.x=.5;
+  if(axis==='both'||axis==='y')item.y=.5;
+  updateSelection();showStatus('카드 중앙에 정렬했어요');
+}
+function shiftSelected(dx,dy){
+  const item=activeLayer();if(!item)return;
+  checkpoint();const size=ratios[state.ratio];
+  item.x=Math.max(.01,Math.min(.99,item.x+dx/size.w));
+  item.y=Math.max(.01,Math.min(.99,item.y+dy/size.h));
   render();
 }
-function pointerCoords(e, canvas = card) { const b = canvas.getBoundingClientRect(); return { x: (e.clientX - b.left) / b.width, y: (e.clientY - b.top) / b.height }; }
-card.addEventListener('pointerdown', (e) => {
-  const { x, y } = pointerCoords(e), r = ratios[state.ratio];
-  const hit = [...state.layers].reverse().find((layer) => {
-    const dx = (x - layer.x) * r.w, dy = (y - layer.y) * r.h;
-    const size = (layer.kind === 'photo' ? 150 : layer.kind === 'sticker' ? 60 : 170) * layer.scale;
-    return Math.abs(dx) < size && Math.abs(dy) < size;
-  });
-  state.selected = hit?.id || null; dragId = hit?.id || null;
-  if (dragId) card.setPointerCapture(e.pointerId);
+function reorderSelected(dir){
+  const ix=state.layers.findIndex(l=>l.id===state.selected);
+  if(ix<0||ix+dir<0||ix+dir>=state.layers.length)return;
+  checkpoint();const [a]=state.layers.splice(ix,1);state.layers.splice(ix+dir,0,a);
+  updateSelection();showStatus(dir>0?'앞으로 가져왔어요':'뒤로 보냈어요');
+}
+function pointerCoords(e,element=card){
+  const b=element.getBoundingClientRect();return {x:(e.clientX-b.left)/b.width,y:(e.clientY-b.top)/b.height};
+}
+function hitTest(item, x, y){
+  const r=ratios[state.ratio];let w=190*item.scale,h=70*item.scale;
+  if(item.kind==='photo'&&item.image?.naturalWidth){
+    const aspect=item.image.naturalWidth/item.image.naturalHeight;
+    w=(aspect>=1?225:225*aspect)*item.scale;h=(aspect>=1?225/aspect:225)*item.scale;
+  } else if(item.kind==='sticker'){w=h=90*item.scale;}
+  else if(item.kind==='text'){w=Math.min(r.w*.83,(item.text||'텍스트').length*25*item.scale+30);h=58*item.scale;}
+  const a=-item.angle*Math.PI/180,dx=(x-item.x)*r.w,dy=(y-item.y)*r.h;
+  const rotatedX=dx*Math.cos(a)-dy*Math.sin(a),rotatedY=dx*Math.sin(a)+dy*Math.cos(a);
+  return Math.abs(rotatedX)<w/2+15 && Math.abs(rotatedY)<h/2+15;
+}
+function snapValue(value,positions,threshold) {
+  let best=value,snap=null,dist=threshold;
+  for(const position of positions){let d=Math.abs(value-position);if(d<=dist){best=position;snap=position;dist=d;}}
+  return {value:best, guide:snap};
+}
+function getSnappedPoint(item, x, y) {
+  const b=card.getBoundingClientRect();
+  x=Math.max(0.01,Math.min(.99,x));y=Math.max(.01,Math.min(.99,y));
+  if(!$('#snap-toggle').checked)return {x,y,guides:null};
+  const other=state.layers.filter(l=>l.id!==item.id);
+  const tx=[.5,.15,.85,...other.map(l=>l.x)];
+  const ty=[.5,.15,.85,...other.map(l=>l.y)];
+  const sx=snapValue(x,tx,12/b.width),sy=snapValue(y,ty,12/b.height);
+  return {x:sx.value,y:sy.value,guides:{x:sx.guide,y:sy.guide}};
+}
+card.addEventListener('pointerdown',e=>{
+  const pos=pointerCoords(e);
+  const hit=[...state.layers].reverse().find(l=>hitTest(l,pos.x,pos.y));
+  state.selected=hit?.id||null;
+  if(hit){
+    dragSession={id:hit.id,originalX:hit.x,originalY:hit.y,offsetX:pos.x-hit.x,offsetY:pos.y-hit.y,started:false,pointerId:e.pointerId};
+    card.setPointerCapture(e.pointerId);
+    card.focus();
+  }
   updateSelection();
 });
-card.addEventListener('pointermove', (e) => {
-  if (!dragId) return;
-  const item = state.layers.find((x) => x.id === dragId); if (!item) return;
-  const { x, y } = pointerCoords(e);
-  item.x = Math.max(0, Math.min(1, x)); item.y = Math.max(0, Math.min(1, y)); render();
+card.addEventListener('pointermove',e=>{
+  if(!dragSession||dragSession.pointerId!==e.pointerId)return;
+  const item=activeLayer();if(!item||item.id!==dragSession.id)return;
+  const p=pointerCoords(e), proposedX=p.x-dragSession.offsetX,proposedY=p.y-dragSession.offsetY;
+  const dx=(proposedX-dragSession.originalX)*card.getBoundingClientRect().width;
+  const dy=(proposedY-dragSession.originalY)*card.getBoundingClientRect().height;
+  if(!dragSession.started){
+    if(Math.hypot(dx,dy)<3)return;
+    checkpoint();dragSession.started=true;
+  }
+  const value=getSnappedPoint(item,proposedX,proposedY);
+  item.x=value.x;item.y=value.y;alignmentGuides=value.guides;
+  render();
 });
-card.addEventListener('pointerup', () => { dragId = null; });
-card.addEventListener('pointercancel', () => { dragId = null; });
-function paintPalette(selector, chosen, callback) {
-  const node = $(selector); node.replaceChildren();
-  colors.forEach((c) => {
-    const button = el('button', { class: 'color-dot' + (c === chosen ? ' active' : ''), title: c, 'aria-label': '글자 색상 ' + c }); button.style.background = c;
-    button.onclick = () => callback(c); node.append(button);
+function finishDrag(){
+  if(!dragSession)return;
+  const moved=dragSession.started;dragSession=null;alignmentGuides=null;
+  render();if(moved)showStatus('위치를 옮겼어요 · ↶ 되돌리기 가능');
+}
+card.addEventListener('pointerup',finishDrag);
+card.addEventListener('pointercancel',finishDrag);
+card.addEventListener('lostpointercapture',finishDrag);
+card.addEventListener('dblclick',()=>{
+ const l=activeLayer();if(l?.kind==='text'){$('#edit-text').focus();$('#edit-text').select();}
+});
+function paintPalette(selector,chosen,callback){
+  const node=$(selector);node.replaceChildren();
+  colors.forEach(c=>{
+    const b=el('button',{type:'button',class:'color-dot'+(c===chosen?' active':''),'aria-label':'글자 색상 '+c,'aria-pressed':String(c===chosen),title:c});
+    b.style.background=c;b.onclick=()=>callback(c);node.append(b);
   });
 }
-function setTab(tab) {
-  state.tab = tab;
-  $$('.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
-  ['text', 'photo', 'sticker'].forEach((t) => $('#tab-' + t).classList.toggle('hidden', t !== tab));
+function setTab(tab){
+  state.tab=tab;
+  $$('.tabs button').forEach(b=>{
+    const is=b.dataset.tab===tab;
+    b.classList.toggle('active',is);b.setAttribute('aria-selected',String(is));
+  });
+  ['text','photo','sticker'].forEach(t=>$('#tab-'+t).classList.toggle('hidden',t!==tab));
 }
-$$('.tabs button').forEach((button) => button.onclick = () => setTab(button.dataset.tab));
-$('#add-text').onclick = () => addLayer({ kind: 'text', text: $('#text-input').value || 'My universe', color: state.newColor, scale: 1, y: .48 });
-$('#stickers').replaceChildren(...stickerSymbols.map((symbol) => {
-  const b = el('button', { title: symbol, 'aria-label': '스티커 ' + symbol }, symbol);
-  b.onclick = () => addLayer({ kind: 'sticker', text: symbol, x: .4 + Math.random() * .2, y: .4 + Math.random() * .2 }); return b;
+$$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('#add-text').onclick=()=>{addLayer({kind:'text',text:$('#text-input').value||'My universe',color:state.newColor,scale:1,y:.35});$('#edit-text').focus();};
+$('#stickers').replaceChildren(...stickerSymbols.map(symbol=>{
+  const b=el('button',{title:symbol,'aria-label':'스티커 '+symbol},symbol);
+  b.onclick=()=>addLayer({kind:'sticker',text:symbol,x:.5,y:.5});
+  return b;
 }));
-
-$('#file').addEventListener('change', (e) => {
-  const file = e.target.files?.[0]; e.target.value = ''; if (!file) return;
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 12000000) { error('JPG/PNG/WEBP 12MB 이하 파일을 사용해 주세요.'); return; }
-  const reader = new FileReader(); reader.onload = () => {
-    const img = new Image(); img.onload = () => { error(''); addLayer({ kind: 'photo', image: img, y: .64, scale: 1.25 }); };
-    img.onerror = () => error('이미지를 열 수 없어요. 다른 파일을 골라 주세요.'); img.src = String(reader.result);
-  }; reader.readAsDataURL(file);
+$('#file').addEventListener('change',e=>{
+  const file=e.target.files?.[0];e.target.value='';if(!file)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12000000){error('JPG/PNG/WEBP 12MB 이하 파일을 사용해 주세요.');return;}
+  const reader=new FileReader();reader.onload=()=>{
+    const img=new Image();img.onload=()=>{
+      error('');addLayer({kind:'photo',image:img,y:.57,scale:1.25});
+      showStatus('사진이 추가됐어요 · 누끼가 필요하면 오른쪽 버튼을 눌러보세요.');
+    };img.onerror=()=>error('이미지를 열 수 없어요. 다른 파일을 골라 주세요.');
+    img.src=String(reader.result);
+  };reader.readAsDataURL(file);
 });
-$('#scale').oninput = (e) => { const a = activeLayer(); if (!a) return; a.scale = Number(e.target.value); $('#scale-num').textContent = Math.round(a.scale * 100) + '%'; render(); };
-$('#angle').oninput = (e) => { const a = activeLayer(); if (!a) return; a.angle = Number(e.target.value); $('#angle-num').textContent = a.angle + '°'; render(); };
-$('#edit-text').oninput = (e) => { const a = activeLayer(); if (a?.kind === 'text') { a.text = e.target.value; render(); } };
-$('#delete-layer').onclick = () => { state.layers = state.layers.filter((l) => l.id !== state.selected); state.selected = null; updateSelection(); };
-$('#clear-select').onclick = () => { state.selected = null; updateSelection(); };
-$('#clear-layers').onclick = () => { state.layers = []; state.selected = null; updateSelection(); };
-$$('.style-options button').forEach((b) => b.onclick = () => { state.style = b.dataset.style; $$('.style-options button').forEach((x) => x.classList.toggle('active', x === b)); render(); });
+$('#scale').addEventListener('pointerdown',()=>{if(activeLayer())checkpoint();});
+$('#angle').addEventListener('pointerdown',()=>{if(activeLayer())checkpoint();});
+$('#scale').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))checkpoint();});
+$('#angle').addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))checkpoint();});
+$('#scale').oninput=e=>{const l=activeLayer();if(!l)return;l.scale=Number(e.target.value);$('#scale-num').textContent=Math.round(l.scale*100)+'%';render();};
+$('#angle').oninput=e=>{const l=activeLayer();if(!l)return;l.angle=Number(e.target.value);$('#angle-num').textContent=l.angle+'°';render();};
+$('#edit-text').addEventListener('focus',()=>{if(activeLayer()?.kind==='text')checkpoint();});
+$('#edit-text').oninput=e=>{const l=activeLayer();if(l?.kind==='text'){l.text=e.target.value;updateLayerList();render();}};
+$('#new-custom-color').onchange=e=>{state.newColor=e.target.value;renderNewPalette();};
+$('#selected-custom-color').onchange=e=>{const l=activeLayer();if(l?.kind==='text'){checkpoint();l.color=e.target.value;updateSelection();}};
+$('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
+$('#delete-layer').onclick=removeSelected;$('#delete-quick').onclick=removeSelected;
+$('#duplicate-layer').onclick=duplicateSelected;$('#duplicate-quick').onclick=duplicateSelected;
+$('#center-quick').onclick=()=>centerSelected('both');
+$('#center-x').onclick=()=>centerSelected('x');
+$('#center-y').onclick=()=>centerSelected('y');
+$('#front-layer').onclick=()=>reorderSelected(1);
+$('#back-layer').onclick=()=>reorderSelected(-1);
+$('#move-left').onclick=()=>shiftSelected(-10,0);
+$('#move-right').onclick=()=>shiftSelected(10,0);
+$('#move-up').onclick=()=>shiftSelected(0,-10);
+$('#move-down').onclick=()=>shiftSelected(0,10);
+$('#clear-select').onclick=()=>{state.selected=null;updateSelection();};
+$('#clear-layers').onclick=()=>{
+ if(!state.layers.length)return;
+ if(!confirm('꾸민 요소를 모두 삭제할까요? (되돌릴 수 있어요)'))return;
+ checkpoint();state.layers=[];state.selected=null;updateSelection();
+};
+$$('.style-options button').forEach(b=>b.onclick=()=>{
+ if(state.style===b.dataset.style)return;
+ checkpoint();state.style=b.dataset.style;syncFrameButtons();render();
+});
+document.addEventListener('keydown',e=>{
+ const tag=document.activeElement?.tagName?.toLowerCase();
+ const isEditing=tag==='input'||tag==='textarea'||tag==='select'||document.activeElement?.isContentEditable;
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();return;}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();return;}
+ if($('#studio').classList.contains('hidden')||isEditing)return;
+ if(e.key==='Escape'&&state.selected){state.selected=null;updateSelection();return;}
+ if((e.key==='Delete'||e.key==='Backspace')&&state.selected){e.preventDefault();removeSelected();return;}
+ const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+ if(directions[e.key]&&activeLayer()){e.preventDefault();let [dx,dy]=directions[e.key];shiftSelected(dx*(e.shiftKey?10:1),dy*(e.shiftKey?10:1));}
+});
 function openCutout() {
   const item = activeLayer(); if (!item || item.kind !== 'photo' || !item.image) return;
   const image = item.image, scale = Math.min(1, 700 / Math.max(image.naturalWidth, image.naturalHeight));
@@ -318,7 +505,7 @@ $('#reset-cut').onclick = () => { if (basePixels) cutCanvas.getContext('2d')?.pu
 $('#apply-cut').onclick = () => {
   const item = activeLayer(); if (!item || item.kind !== 'photo') return;
   const image = new Image();
-  image.onload = () => { item.image = image; $('#cutout-dialog').close(); render(); };
+  image.onload = () => { checkpoint(); item.image = image; $('#cutout-dialog').close(); render(); };
   image.src = cutCanvas.toDataURL('image/png');
 };
 $('#open-cut').onclick = openCutout;
@@ -343,6 +530,7 @@ $('#brand').onclick = reset;
 $('#change-date').onclick = reset;
 $('#start').onclick = start;
 
-function renderNewPalette() { paintPalette('#new-colors', state.newColor, (c) => { state.newColor = c; renderNewPalette(); }); }
+function renderNewPalette() { paintPalette('#new-colors', state.newColor, (c) => { state.newColor = c; $('#new-custom-color').value = c; renderNewPalette(); }); }
 renderNewPalette();
+updateHistoryButtons();
 initDate();
