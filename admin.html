@@ -57,6 +57,8 @@ small,.hint{color:#9ba8c3;font-size:11px}
 #help{margin-top:30px;padding:19px;border:1px solid #34435f;border-radius:14px;color:#9aa8c5;font-size:11px;line-height:1.8}
 @media(max-width:600px){header{padding:14px}.logo{font-size:16px}main{margin-top:25px}.card{padding:18px}.grid{grid-template-columns:1fr}.order{gap:9px}.toolbar{align-items:stretch}.filters{width:100%}}
 @media print{header,nav,.toolbar,.actions,#help{display:none}}
+.order h3{font-size:16px;font-weight:800;line-height:1.5;word-break:break-word}
+.order .meta{font-size:12px;line-height:1.9;color:#d6d8ed}
 </style>
 <script src="./print-config.js"></script>
 </head>
@@ -103,7 +105,7 @@ const $=id=>document.getElementById(id);
 const cfg=window.PRINT_CONFIG||{};
 const secret=new URLSearchParams(location.hash.slice(1)).get("key")||"";
 let db=null,active=false,filter="all",orders=[],refreshTimer=null,currentPreview=null;
-const safeName=s=>(s||"").replace(/[^a-zA-Z0-9_-]/g,"").slice(0,24);
+const safeName=s=>(s||"").replace(/[^a-zA-Z0-9가-힣_-]/g,"").slice(0,40);
 const statuses={pending:"인쇄 대기",printing:"인쇄 중",done:"완료"};
 function tell(id,msg,error=false){const node=$(id);node.textContent=msg;node.classList.toggle("err",error);}
 function add(tag,value,className){const el=document.createElement(tag);if(value!==undefined)el.textContent=value;if(className)el.className=className;return el;}
@@ -148,7 +150,7 @@ async function downloadFile(order){
  const blob=await response.blob();
  const url=URL.createObjectURL(blob);
  const anchor=document.createElement("a");
- anchor.href=url;anchor.download="orbit-"+safeName(order.nickname)+"-"+order.id.slice(0,8)+".png";
+ anchor.href=url;anchor.download="orbit-"+safeName(order.student_number||"card")+"-"+safeName(order.student_name||order.nickname)+"-"+order.id.slice(0,8)+".png";
  document.body.append(anchor);anchor.click();anchor.remove();
  setTimeout(()=>URL.revokeObjectURL(url),15000);
 }
@@ -170,22 +172,24 @@ function renderOrders(){
  items.forEach(o=>{
   const card=add("article",undefined,"order");
   const top=add("div",undefined,"order-top");
-  top.append(add("h3",o.nickname),add("span",statuses[o.status]||o.status,"tag "+o.status));
+  const displayName=o.student_name||o.nickname||"이름 미등록";
+  top.append(add("h3",(o.student_number?o.student_number+" · ":"")+displayName),add("span",statuses[o.status]||o.status,"tag "+o.status));
   card.append(top);
   const meta=add("div",undefined,"meta");
-  meta.textContent="접수 "+dateFmt(o.created_at)+"\n생일 "+o.birthday_month+"월 "+o.birthday_day+"일 · "+o.ratio+"\n접수번호 "+o.id.slice(0,8);
+  meta.textContent=(o.student_number?"학번 "+o.student_number+" · 이름 "+displayName+"\n":"이름 "+displayName+"\n")+
+    "접수 "+dateFmt(o.created_at)+"\n생일 "+o.birthday_month+"월 "+o.birthday_day+"일 · "+o.ratio+"\n접수번호 "+o.id.slice(0,8);
   meta.style.whiteSpace="pre-line";card.append(meta);
   const actions=add("div",undefined,"actions");
   const prev=add("button","👁 미리보기"),down=add("button","↓ PNG 저장");
   prev.onclick=async()=>{prev.disabled=true;try{
    $("preview-img").src=await signedUrl(o);
    currentPreview=o;
-   $("preview-title").textContent=o.nickname+" · 인쇄용 이미지";
+   $("preview-title").textContent=(o.student_number?o.student_number+" · ":"")+displayName+" · 인쇄용 이미지";
    $("preview").showModal();
   }catch(e){tell("desk-msg",e.message,true)}finally{prev.disabled=false}};
   down.onclick=async()=>{down.disabled=true;try{await downloadFile(o);tell("desk-msg","PNG 다운로드를 시작했어요.")}catch(e){tell("desk-msg",e.message,true)}finally{down.disabled=false}};
   actions.append(prev,down);
-  const select=document.createElement("select");select.setAttribute("aria-label",o.nickname+"의 인쇄 상태");
+  const select=document.createElement("select");select.setAttribute("aria-label",displayName+"의 인쇄 상태");
   Object.entries(statuses).forEach(([value,label])=>{const opt=add("option",label);opt.value=value;select.append(opt)});
   select.value=o.status;
   select.onchange=async()=>{
