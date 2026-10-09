@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#0c1020" />
+<title>Orbit Keepsake | 생일의 허블 포토카드</title>
+<meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<div id="app">
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO</span></header>
+<main id="home" class="home">
+ <div class="hero-copy">
+  <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
+  <h1>우주가 기억하는<br/><em>너의 특별한 하루.</em></h1>
+  <p>당신의 생일에 허블 우주망원경이 관측한 우주를 만나보세요.<br/>그날의 별빛을 세상에 하나뿐인 포토카드로 간직해요.</p>
+  <section class="birthday-box"><h2><span class="step">01</span> 언제 태어났나요?</h2><p>태어난 <b>월과 일</b>을 선택하면 NASA 아카이브에서 사진 5장을 찾아드려요.</p>
+   <div class="date-fields"><label>MONTH · 월<select id="month"></select></label><label>DAY · 일<select id="day"></select></label></div>
+   <button class="primary full" id="start">내 생일의 우주 만나기 →</button><p id="home-error" class="error"></p><small>✦ 출생 연도가 아닌 월·일 기준입니다. 사진의 관측 연도는 따로 표시해요.</small>
+  </section>
+  <div class="benefits">✓ 공식 NASA 자료 <span>✓ 무료 PNG 저장</span><span>✓ 사진 누끼·꾸미기</span></div>
+ </div>
+ <div class="hero-visual"><div class="halo"></div><div class="hero-card"><img src="https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/share_images/july-19-2002-ngc300.jpg" alt="허블 관측 사진 예시"/><div class="hero-frame">✦<div>YOU ARE<br/>MY UNIVERSE</div><small>19 JULY · FOREVER</small></div></div><span class="float-note">✧ one day in the cosmos</span></div>
+</main>
+<main id="studio" class="studio hidden">
+ <aside class="left panel">
+  <h2><span class="step">01</span> 나의 우주 사진</h2>
+  <div class="birthday-mini"><span>✦</span><div><small>MY COSMIC BIRTHDAY</small><strong id="birthday-label">7월 19일</strong></div><button id="change-date" class="small-btn">변경</button></div>
+  <p class="muted">그 날짜에 허블이 관측한 사진 중 하나를 선택해 주세요.</p>
+  <div id="photo-list" class="photo-list"></div>
+  <div id="nasa-info" class="nasa-info"></div>
+  <h2><span class="step">02</span> 카드 비율</h2>
+  <div id="ratios" class="ratios"></div>
+  <p class="source-note">NASA/ESA 출처. 실제 관측 연도는 출생 연도와 다를 수 있고 여러 날짜의 노출이 결합되기도 합니다. 이 사이트는 NASA의 공식 서비스나 후원 상품이 아닙니다.</p>
+ </aside>
+ <section class="center">
+  <div class="stage-top"><span>✦ LIVE PREVIEW</span><small>카드 위 요소를 드래그해 이동해요</small></div>
+  <div class="canvas-wrap"><div class="canvas-glow"></div><canvas id="card" width="540" height="860"></canvas></div>
+  <div class="stage-bottom"><span id="ratio-label">포토카드 · 54 × 86 mm</span><button id="clear-select" class="small-btn">선택 해제</button><button id="clear-layers" class="small-btn">꾸미기 초기화</button></div>
+  <p id="studio-error" class="error"></p>
+ </section>
+ <aside class="right panel">
+  <h2><span class="step">03</span> 나만의 감성 더하기</h2>
+  <div class="tabs"><button class="active" data-tab="text">T · 텍스트</button><button data-tab="photo">▧ · 내 사진</button><button data-tab="sticker">☆ · 스티커</button></div>
+  <section id="tab-text" class="tab-pane"><label class="field-label" for="text-input">CARD LETTERING</label><input id="text-input" value="My little universe" maxlength="60"/><div class="color-palette"><span>글자 색상</span><div id="new-colors"></div></div><button id="add-text" class="primary full">+ 글자 카드에 넣기</button><p class="tip">기념일이나 이름, 작은 편지를 자유롭게 남겨보세요.</p></section>
+  <section id="tab-photo" class="tab-pane hidden"><label class="upload-box">⇧<strong>사진 올리기</strong><small>JPG · PNG · WEBP (12MB 이하)</small><input id="file" type="file" accept="image/jpeg,image/png,image/webp" /></label><div class="callout">✂ 누끼 스튜디오<br/><small>사진을 선택하고 배경을 제거할 수 있어요.</small></div><button id="open-cut" class="secondary full">✂ 자동 누끼 / 수동 편집</button><p class="tip">자동 제거는 단색 배경에 효과적입니다. 복잡한 배경은 직접 지우고 복원하세요.</p></section>
+  <section id="tab-sticker" class="tab-pane hidden"><p class="muted">귀여운 스티커를 눌러 카드에 꾸며보세요.</p><div id="stickers" class="stickers"></div></section>
+  <hr/><div class="setting-head"><b>선택한 요소 편집</b><button id="delete-layer" class="small-btn">선택 삭제</button></div>
+  <div id="layer-controls" class="layer-controls hidden"><label>크기 <output id="scale-num">100%</output><input id="scale" type="range" min="0.25" max="3" step="0.05" value="1" /></label><label>회전 <output id="angle-num">0°</output><input id="angle" type="range" min="-180" max="180" step="5" value="0" /></label><div id="text-edit-controls" class="hidden"><label class="field-label" for="edit-text">선택한 글자 수정</label><input id="edit-text" maxlength="60"/><div id="edit-colors" class="color-palette"></div></div></div>
+  <div id="no-layer" class="empty">카드 위의 사진, 글자 또는 스티커를 클릭하면 크기와 회전을 바꿀 수 있어요.</div>
+  <hr/><div class="setting-head"><b>카드 테두리</b></div><div class="style-options"><button data-style="frame" class="active">✦ 별빛 프레임</button><button data-style="clean">미니멀</button></div>
+  <button id="save" class="primary full save">⇩ 포토카드 완성하고 저장</button><p class="tip centered">PNG 저장 후 나만의 기념품을 소개할게요.</p>
+ </aside>
+</main>
+<dialog id="cutout-dialog" class="dialog cut-dialog"><div class="dialog-inner"><button class="close-x" id="close-cut" aria-label="닫기">×</button><h2>✂ 누끼 스튜디오</h2><p class="muted">자동 배경 제거 후 지우개와 복원 브러시로 다듬어 주세요.</p><div class="cut-actions"><button id="auto-cut" class="secondary">✦ 자동 누끼 (단색 배경)</button><button id="erase-mode" class="primary">지우개</button><button id="restore-mode" class="secondary">복원</button></div><div class="cut-settings"><label>브러시 크기 <span id="brush-label">24</span>px<input id="brush" type="range" min="5" max="80" value="24"/></label><label>자동 제거 민감도 <span id="tolerance-label">60</span><input id="tolerance" type="range" min="15" max="145" step="5" value="60"/></label></div><div class="cut-preview"><canvas id="cut-canvas"></canvas></div><div class="dialog-buttons"><button id="reset-cut" class="secondary">원본 복원</button><button id="apply-cut" class="primary">✓ 누끼 적용하기</button></div></div></dialog>
+<dialog id="promo-dialog" class="dialog promo-dialog"><div class="dialog-inner promo-inner"><h2>방금 만든 포토카드<br/><em>키링으로 달고다니고싶지 않으세요?</em></h2><p class="muted">화면 속 우주를 작은 선물로 간직해보세요.</p><img src="/assets/promo.svg" alt="직접 제작한 기억 CD와 우주 포토카드 키링 홍보 이미지"/><small class="promo-label">TAPMOMENT · MEMORY CD & KEYRING</small><a href="https://tapmoment-shop.ddogy503.chatgpt.site/" target="_blank" rel="noopener noreferrer" class="primary full btn-link">기억 CD 구경하기 ↗</a><button id="close-promo" class="secondary full">닫기 · 처음 화면으로</button></div></dialog>
+</div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
