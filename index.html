@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="orbit-build" content="20261009-v5.1" />
+<meta name="orbit-build" content="20261009-v6" />
 <meta name="theme-color" content="#0c1020" />
 <title>Orbit Keepsake | 생일의 허블 포토카드</title>
 <meta name="description" content="NASA 허블이 당신의 생일에 관측한 우주 사진으로 나만의 포토카드를 만들어보세요." />
@@ -136,11 +136,77 @@
 .creator-credit{position:absolute;left:50%;bottom:19px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);font-size:16px;font-weight:600;letter-spacing:.05em;color:#ded9ff;text-align:center;z-index:2}
 @media(max-width:680px){.creator-credit{font-size:14px;bottom:20px;}}
 
+
+/* v6 — compact editor, not a panel of positioning buttons */
+.studio {grid-template-columns:245px minmax(350px,1fr) 305px}
+.panel {padding:24px 16px}
+.stage-top {gap:10px}
+.stage-top small {text-align:left;margin-left:12px}
+.editor-action-bar button {min-width:78px}
+.quick-actions {padding:7px 10px;margin:10px auto 6px;max-width:390px;border-radius:12px;box-shadow:none}
+.quick-actions .selected-description {display:none}
+.quick-actions button {min-height:38px;padding:8px 12px;font-weight:600;flex:1}
+.edit-selection-label {margin-bottom:18px;padding:10px 12px;font-size:11px}
+.layer-controls label {margin:8px 0 13px;font-size:12px}
+.layer-controls input[type=range] {margin:8px 0 15px}
+.editor-status {font-size:10px;min-height:17px;line-height:1.5}
+.stage-bottom {border:0;justify-content:flex-end;gap:7px;padding-top:4px}
+.stage-bottom span {margin-right:auto;font-weight:500}
+.stage-bottom button {font-size:10px;min-height:31px!important;padding:5px 8px!important}
+.right .tabs {margin-bottom:20px}
+.right .tabs button {min-height:45px;font-size:11px}
+.right .tip {margin:10px 0 5px}
+.right .setting-head {margin-top:12px}
+#no-layer.empty {padding:14px 12px;font-size:11px}
+.more-style {padding:7px 3px 15px;color:#aeb6d2;font-size:11px;border-top:1px solid #38405b}
+.more-style summary {cursor:pointer;list-style-position:inside;padding:7px 0}
+.more-style .style-options {margin:8px 0}
+#save {margin-top:10px;font-size:13px}
+#open-cut {font-size:13px}
+.cut-dialog {max-width:min(740px,95vw)}
+.cut-dialog .dialog-inner {padding:25px}
+.cut-actions {margin:14px 0;gap:8px}
+.cut-actions button {flex:1;font-size:12px;min-height:43px;white-space:nowrap}
+.cut-actions #auto-cut {flex:2}
+.cut-status {background:#222f4b;border:1px solid #515c85;border-radius:10px;padding:11px 13px;font-size:11px;line-height:1.7;color:#d7def6;margin:10px 0}
+.cut-dialog .cut-preview {height:min(48vh,500px)}
+.cut-dialog .cut-settings {display:block;margin:14px 0 5px}
+.cut-dialog .dialog-buttons button {min-height:44px;min-width:90px}
+.cut-license {margin:13px 0 0;font-size:9px;color:#8999b2;line-height:1.7}
+@media(max-width:1100px){
+ .studio {grid-template-columns:225px minmax(290px,1fr) 282px}
+ .panel {padding:20px 13px}
+}
+@media(max-width:940px){
+ .studio {grid-template-columns:240px minmax(290px,1fr)}
+ .right {grid-column:1/-1}
+ .right .tabs {max-width:520px}
+ .right .tab-pane {max-width:520px}
+ .right .layer-controls {max-width:520px}
+}
+@media(max-width:680px){
+ .studio {display:flex;flex-direction:column}
+ .center {order:-1}
+ .right {order:1}
+ .left {order:2}
+ .stage-top {justify-content:space-between}
+ .stage-top small {display:none}
+ .editor-action-bar {width:auto;max-width:45%;margin-left:auto!important}
+ .editor-action-bar button {min-width:0;font-size:10px;white-space:nowrap;min-height:34px}
+ .quick-actions {margin:8px auto}
+ .quick-actions button {min-height:39px}
+ .stage-bottom {justify-content:center;gap:8px}
+ .stage-bottom span {width:auto;margin:0 auto 0 0}
+ .cut-actions {flex-wrap:wrap}
+ .cut-actions #auto-cut {width:100%;flex:auto}
+ .cut-dialog .dialog-inner {padding:19px 15px}
+}
+
 </style>
 </head>
 <body>
 <div id="app">
-<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v5.1</span></header>
+<header class="topbar"><button id="brand" class="brand"><span class="brand-icon">✦</span> orbit<span class="dot">.</span>keepsake</button><span class="tag">HUBBLE BIRTHDAY STUDIO · v6</span></header>
 <main id="home" class="home">
  <div class="hero-copy">
   <span class="eyebrow">✦ YOUR DAY, YOUR UNIVERSE</span>
@@ -168,13 +234,13 @@
  </aside>
  <section class="center">
   
+  
   <div class="stage-top">
-   <span>✦ PHOTO CARD STUDIO</span>
-   <small>요소를 탭하거나 드래그해 수정하세요</small>
-   <div class="editor-action-bar" role="toolbar" aria-label="편집 기록 및 정렬 설정">
-    <button id="history-undo" type="button" class="secondary" disabled title="실행 취소 Ctrl+Z">↶ 되돌리기</button>
-    <button id="history-redo" type="button" class="secondary" disabled title="다시 실행 Ctrl+Shift+Z">↷ 다시 실행</button>
-    <label class="snap-switch" title="중앙선 및 다른 요소 위치에 자동 맞춤"><input type="checkbox" id="snap-toggle" checked/> ⊕ 자동 정렬</label>
+   <span>✦ 포토카드 편집</span>
+   <small>사진·글자를 손가락이나 마우스로 옮겨보세요</small>
+   <div class="editor-action-bar" role="toolbar" aria-label="편집 기록">
+    <button id="history-undo" type="button" class="secondary" disabled title="되돌리기 Ctrl+Z">↶ 취소</button>
+    <button id="history-redo" type="button" class="secondary" disabled title="다시 실행">↷ 다시</button>
    </div>
   </div>
   <div class="mobile-photo-section">
@@ -184,67 +250,62 @@
    <div class="canvas-wrap"><div class="canvas-glow"></div><canvas id="card" width="540" height="860" tabindex="0" aria-label="편집 중인 포토카드. 추가된 요소를 누르고 드래그하세요. 선택 후 방향키 이동도 가능합니다."></canvas></div>
   
   <div id="quick-actions" class="quick-actions hidden" role="toolbar" aria-label="선택한 요소 바로 편집">
-   <div class="selected-description">✦ 선택한 요소를 수정해 보세요</div>
-   <button id="duplicate-quick" type="button" title="이 요소 복제">⧉ 복제</button>
-   <button id="center-quick" type="button" title="카드 중앙으로 이동">⊕ 중앙 정렬</button>
-   <button id="delete-quick" type="button" class="delete-action" title="선택한 요소 삭제">♧ 삭제</button>
+   
+   <button id="duplicate-quick" type="button" title="선택 요소 복제">⧉ 복제</button>
+   <button id="center-quick" type="button" title="선택 요소 중앙 정렬">⊕ 중앙</button>
+   <button id="delete-quick" type="button" class="delete-action" title="선택 요소 삭제">✕ 삭제</button>
   </div>
-  <div id="edit-status" class="editor-status" aria-live="polite">✦ 사진·텍스트·스티커를 추가하면 이곳에서 바로 조작할 수 있어요.</div>
-  <div class="stage-bottom"><span id="ratio-label">포토카드 · 54 × 86 mm</span><button id="clear-select" class="small-btn">선택 해제</button><button id="clear-layers" class="small-btn">꾸미기 초기화</button></div>
+  <div id="edit-status" class="editor-status" aria-live="polite">요소를 누르고 드래그하면 위치를 바꿀 수 있어요.</div>
+  <div class="stage-bottom"><span id="ratio-label">포토카드 · 54 × 86 mm</span><button id="clear-select" class="small-btn">선택 해제</button><button id="clear-layers" class="small-btn">전체 초기화</button></div>
   <p id="studio-error" class="error"></p>
  </section>
  <aside class="right panel">
-  <h2><span class="step">03</span> 나만의 감성 더하기</h2>
+  <h2>✦ 간편 꾸미기</h2>
   <div class="tabs"><button class="active" data-tab="text">T · 텍스트</button><button data-tab="photo">▧ · 내 사진</button><button data-tab="sticker">☆ · 스티커</button></div>
-  <section id="tab-text" class="tab-pane"><label class="field-label" for="text-input">CARD LETTERING</label><input id="text-input" value="My little universe" maxlength="60"/><div class="color-palette"><span>원하는 글자 색을 골라주세요</span><div id="new-colors"></div></div><label class="custom-picker">🎨 직접 색상 선택 <input type="color" id="new-custom-color" value="#ffffff" aria-label="새 글자 색상 직접 선택" /></label><button id="add-text" class="primary full">+ 글자 카드에 넣기</button><p class="tip">기념일이나 이름, 작은 편지를 자유롭게 남겨보세요.</p></section>
-  <section id="tab-photo" class="tab-pane hidden"><label class="upload-box">⇧<strong>사진 올리기</strong><small>JPG · PNG · WEBP (12MB 이하)</small><input id="file" type="file" accept="image/jpeg,image/png,image/webp" /></label><div class="callout">✂ 누끼 스튜디오<br/><small>사진을 선택하고 배경을 제거할 수 있어요.</small></div><button id="open-cut" class="secondary full">✂ 자동 누끼 / 수동 편집</button><p class="tip">자동 제거는 단색 배경에 효과적입니다. 복잡한 배경은 직접 지우고 복원하세요.</p></section>
+  <section id="tab-text" class="tab-pane"><label class="field-label" for="text-input">CARD LETTERING</label><input id="text-input" value="My little universe" maxlength="60"/><div class="color-palette"><span>원하는 글자 색을 골라주세요</span><div id="new-colors"></div></div><label class="custom-picker">🎨 직접 색상 선택 <input type="color" id="new-custom-color" value="#ffffff" aria-label="새 글자 색상 직접 선택" /></label><button id="add-text" class="primary full">+ 글자 카드에 넣기</button></section>
+  <section id="tab-photo" class="tab-pane hidden"><label class="upload-box">＋<strong>내 사진 추가</strong><small>JPG · PNG · WEBP (12MB 이하)</small><input id="file" type="file" accept="image/jpeg,image/png,image/webp" /></label><button id="open-cut" class="primary full" style="margin-top:12px">✨ AI 누끼 · 배경 지우기</button><p class="tip">사진을 올려 선택한 뒤 AI 누끼를 눌러주세요. 첫 사용 시 AI 모델 다운로드에 시간이 걸려요.</p></section>
   <section id="tab-sticker" class="tab-pane hidden"><p class="muted">귀여운 스티커를 눌러 카드에 꾸며보세요.</p><div id="stickers" class="stickers"></div></section>
   
+  
   <hr/>
-  <div class="setting-head"><b>✦ 선택한 요소 편집하기</b></div>
-  <div id="no-layer" class="empty">👆 카드 위에 있는 요소를 클릭하세요.<br/>여기에 크기·색상·위치 조절 도구가 바로 표시돼요.</div>
+  <div class="setting-head"><b>선택한 요소</b></div>
+  <div id="no-layer" class="empty">사진이나 글자를 누르면 여기서 수정할 수 있어요.</div>
   <div id="layer-controls" class="layer-controls hidden">
    <div class="edit-selection-label"><span>✦</span><span id="selected-name">요소 선택됨</span></div>
-   <div class="action-pair">
-    <button id="duplicate-layer" type="button">⧉ 복제하기</button>
-    <button id="delete-layer" type="button" class="danger">✕ 삭제하기</button>
-   </div>
    <label for="scale">크기 <output id="scale-num">100%</output><input id="scale" type="range" min="0.25" max="3" step="0.05" value="1"/></label>
    <label for="angle">회전 <output id="angle-num">0°</output><input id="angle" type="range" min="-180" max="180" step="5" value="0"/></label>
    <div id="text-edit-controls" class="hidden">
-    <label class="field-label" for="edit-text">✎ 글자 내용 바꾸기</label>
-    <input id="edit-text" maxlength="60" placeholder="글자를 입력하세요" />
+    <label class="field-label" for="edit-text">글자 수정</label>
+    <input id="edit-text" maxlength="60" placeholder="글자를 입력하세요"/>
     <div id="edit-colors" class="color-palette"></div>
-    <label class="custom-picker">🎨 선택한 글자 색상 직접 변경 <input id="selected-custom-color" type="color" value="#ffffff" aria-label="선택한 글자 색상 직접 변경" /></label>
-   </div>
-   <div class="position-panel">
-    <h3>⊕ 위치 맞추기 <span>정렬 & 미세 이동</span></h3>
-    <div class="arrange-actions">
-     <button id="center-x" type="button">↔ 가로 중앙</button>
-     <button id="center-y" type="button">↕ 세로 중앙</button>
-     <button id="front-layer" type="button">↑ 앞으로</button>
-     <button id="back-layer" type="button">↓ 뒤로</button>
-    </div>
-    <div class="nudge-pad" role="group" aria-label="위치 10픽셀씩 조정">
-     <span></span><button id="move-up" type="button" aria-label="위로 10픽셀 이동">↑</button><span></span>
-     <button id="move-left" type="button" aria-label="왼쪽으로 10픽셀 이동">←</button>
-     <button id="center-nudge" class="nudge-center" type="button" aria-label="가운데로 이동" title="중앙 정렬">⊕</button>
-     <button id="move-right" type="button" aria-label="오른쪽으로 10픽셀 이동">→</button>
-     <span></span><button id="move-down" type="button" aria-label="아래로 10픽셀 이동">↓</button><span></span>
-    </div>
-    <p>✧ 카드를 드래그해 중앙선에 가까이 가져가면 자동으로 정렬돼요. 키보드 방향키로도 1픽셀씩 움직일 수 있어요.</p>
+    <label class="custom-picker">🎨 직접 색상 선택 <input id="selected-custom-color" type="color" value="#ffffff" aria-label="선택한 글자 색상 직접 변경"/></label>
    </div>
   </div>
-  <div class="editor-layer-panel">
-   <h3>☰ 카드에 추가한 요소</h3>
-   <p class="layer-help">수정할 글자나 사진을 누르세요. 위에 있을수록 카드 앞쪽이에요.</p>
-   <div id="layer-list" class="layer-list" aria-label="포토카드 레이어 목록"></div>
-  </div>
-  <hr/><div class="setting-head"><b>카드 테두리</b></div><div class="style-options"><button data-style="frame">✦ 별빛 프레임</button><button data-style="clean" class="active">미니멀</button></div>
-  <button id="save" class="primary full save" type="button">⇩ 포토카드 완성하고 저장</button><p class="tip centered">PNG 저장 후 나만의 기념품을 소개할게요.</p>
+  <details class="more-style"><summary>카드 테두리 선택</summary><div class="style-options"><button data-style="frame">✦ 별빛 프레임</button><button data-style="clean" class="active">미니멀</button></div></details>
+  <button id="save" class="primary full save" type="button">⇩ 포토카드 완성하고 저장</button>
  </aside>
 </main>
-<dialog id="cutout-dialog" class="dialog cut-dialog"><div class="dialog-inner"><button class="close-x" id="close-cut" aria-label="닫기">×</button><h2>✂ 누끼 스튜디오</h2><p class="muted">자동 배경 제거 후 지우개와 복원 브러시로 다듬어 주세요.</p><div class="cut-actions"><button id="auto-cut" class="secondary">✦ 자동 누끼 (단색 배경)</button><button id="erase-mode" class="primary">지우개</button><button id="restore-mode" class="secondary">복원</button></div><div class="cut-settings"><label>브러시 크기 <span id="brush-label">24</span>px<input id="brush" type="range" min="5" max="80" value="24"/></label><label>자동 제거 민감도 <span id="tolerance-label">60</span><input id="tolerance" type="range" min="15" max="145" step="5" value="60"/></label></div><div class="cut-preview"><canvas id="cut-canvas"></canvas></div><div class="dialog-buttons"><button id="reset-cut" class="secondary">원본 복원</button><button id="apply-cut" class="primary">✓ 누끼 적용하기</button></div></div></dialog>
+
+<dialog id="cutout-dialog" class="dialog cut-dialog">
+ <div class="dialog-inner">
+  <button class="close-x" id="close-cut" aria-label="닫기">×</button>
+  <h2>✨ AI 누끼</h2>
+  <p class="muted">자동으로 배경을 제거한 뒤 필요하면 지우개로 다듬어 주세요.</p>
+  <div class="cut-actions">
+   <button id="auto-cut" class="primary">✨ AI 자동 누끼</button>
+   <button id="erase-mode" class="secondary">지우개</button>
+   <button id="restore-mode" class="secondary">복원</button>
+  </div>
+  <p id="cut-status" class="cut-status" role="status" aria-live="polite">✨ AI 누끼를 누르면 배경이 자동으로 제거돼요.</p>
+  <div class="cut-preview"><canvas id="cut-canvas" aria-label="배경 제거 수정 화면"></canvas></div>
+  <div class="cut-settings"><label>브러시 크기 <span id="brush-label">24</span>px<input id="brush" type="range" min="5" max="80" value="24" /></label></div>
+  <div class="dialog-buttons">
+   <button id="reset-cut" class="secondary">원본</button>
+   <button id="apply-cut" class="primary">적용하기 ✓</button>
+  </div>
+  <p class="cut-license">AI 모델: IMG.LY IS-Net · 브라우저 내부 처리 · <a href="https://github.com/imgly/background-removal-js" target="_blank" rel="noopener noreferrer">AGPL 라이선스</a></p>
+ </div>
+</dialog>
 <dialog id="promo-dialog" class="dialog promo-dialog"><div class="dialog-inner promo-inner"><h2>방금 만든 포토카드<br/><em>키링으로 달고다니고싶지 않으세요?</em></h2><p class="muted">화면 속 우주를 작은 선물로 간직해보세요.</p><img src="./assets/promo.svg" alt="직접 제작한 기억 CD와 우주 포토카드 키링 홍보 이미지"/><small class="promo-label">TAPMOMENT · MEMORY CD & KEYRING</small><a href="https://tapmoment-shop.ddogy503.chatgpt.site/" target="_blank" rel="noopener noreferrer" class="primary full btn-link">기억 CD 구경하기 ↗</a><button id="close-promo" class="secondary full">닫기 · 처음 화면으로</button></div></dialog>
 </div>
 <script>
@@ -295,7 +356,7 @@ function getBirthdayPhotos(archive, month, day) {
   return scored.slice(0, 5);
 }
 const card = $('#card'), cutCanvas = $('#cut-canvas');
-let dragSession = null, alignmentGuides = null, painting = false, basePixels = null;
+let dragSession = null, alignmentGuides = null, painting = false, basePixels = null, cutBusy = false;
 let undoStack = [], redoStack = [];
 const MAX_HISTORY = 35;
 function checkpoint() {
@@ -478,16 +539,7 @@ function render() {
 function layerName(l) {
   return l.kind==='photo'?'📷 업로드한 사진':l.kind==='sticker'?'✦ 스티커 '+(l.text||''): 'T '+(l.text||'텍스트').slice(0,23);
 }
-function updateLayerList(){
-  const list=$('#layer-list');list.replaceChildren();
-  if(!state.layers.length){list.append(el('p',{class:'layer-empty'},'아직 추가한 요소가 없어요.'));return;}
-  [...state.layers].reverse().forEach(item=>{
-    const b=el('button',{type:'button',class:'layer-entry'+(item.id===state.selected?' active':''),'aria-pressed':String(item.id===state.selected)});
-    b.append(el('span',{class:'layer-entry-icon'},item.kind==='photo'?'▧':item.kind==='text'?'T':'✦'),el('span',{},layerName(item)));
-    b.onclick=()=>{state.selected=item.id;updateSelection();};
-    list.append(b);
-  });
-}
+function updateLayerList(){ /* 레이어 목록 대신 카드에서 바로 선택 */ }
 function syncFrameButtons(){
   $$('.style-options button').forEach(b=>b.classList.toggle('active',b.dataset.style===state.style));
 }
@@ -496,8 +548,6 @@ function updateSelection(){
   $('#layer-controls').classList.toggle('hidden',!yes);
   $('#no-layer').classList.toggle('hidden',yes);
   $('#quick-actions').classList.toggle('hidden',!yes);
-  $('#delete-layer').disabled=!yes;
-  $('#duplicate-layer').disabled=!yes;
   $('#open-cut').disabled=!yes||active.kind!=='photo';
   $('#text-edit-controls').classList.toggle('hidden',!yes||active.kind!=='text');
   $('#selected-name').textContent=yes?layerName(active):'요소를 선택해 주세요';
@@ -571,7 +621,6 @@ function snapValue(value,positions,threshold) {
 function getSnappedPoint(item, x, y) {
   const b=card.getBoundingClientRect();
   x=Math.max(0.01,Math.min(.99,x));y=Math.max(.01,Math.min(.99,y));
-  if(!$('#snap-toggle').checked)return {x,y,guides:null};
   const other=state.layers.filter(l=>l.id!==item.id);
   const tx=[.5,.15,.85,...other.map(l=>l.x)];
   const ty=[.5,.15,.85,...other.map(l=>l.y)];
@@ -658,18 +707,18 @@ $('#edit-text').oninput=e=>{const l=activeLayer();if(l?.kind==='text'){l.text=e.
 $('#new-custom-color').onchange=e=>{state.newColor=e.target.value;renderNewPalette();};
 $('#selected-custom-color').onchange=e=>{const l=activeLayer();if(l?.kind==='text'){checkpoint();l.color=e.target.value;updateSelection();}};
 $('#history-undo').onclick=undo;$('#history-redo').onclick=redo;
-$('#delete-layer').onclick=removeSelected;$('#delete-quick').onclick=removeSelected;
-$('#duplicate-layer').onclick=duplicateSelected;$('#duplicate-quick').onclick=duplicateSelected;
+$('#delete-quick').onclick=removeSelected;
+$('#duplicate-quick').onclick=duplicateSelected;
 $('#center-quick').onclick=()=>centerSelected('both');
-$('#center-nudge').onclick=()=>centerSelected('both');
-$('#center-x').onclick=()=>centerSelected('x');
-$('#center-y').onclick=()=>centerSelected('y');
-$('#front-layer').onclick=()=>reorderSelected(1);
-$('#back-layer').onclick=()=>reorderSelected(-1);
-$('#move-left').onclick=()=>shiftSelected(-10,0);
-$('#move-right').onclick=()=>shiftSelected(10,0);
-$('#move-up').onclick=()=>shiftSelected(0,-10);
-$('#move-down').onclick=()=>shiftSelected(0,10);
+
+
+
+
+
+
+
+
+
 $('#clear-select').onclick=()=>{state.selected=null;updateSelection();};
 $('#clear-layers').onclick=()=>{
  if(!state.layers.length)return;
@@ -693,62 +742,79 @@ document.addEventListener('keydown',e=>{
 });
 function openCutout() {
   const item = activeLayer(); if (!item || item.kind !== 'photo' || !item.image) return;
-  const image = item.image, scale = Math.min(1, 700 / Math.max(image.naturalWidth, image.naturalHeight));
+  const image = item.image, scale = Math.min(1, 1700 / Math.max(image.naturalWidth, image.naturalHeight));
   cutCanvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
   cutCanvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
   const context = cutCanvas.getContext('2d', { willReadFrequently: true });
   context.clearRect(0, 0, cutCanvas.width, cutCanvas.height);
   context.drawImage(image, 0, 0, cutCanvas.width, cutCanvas.height);
   basePixels = context.getImageData(0, 0, cutCanvas.width, cutCanvas.height);
-  setCutMode('erase'); $('#cutout-dialog').showModal();
+  cutBusy=false;setCutMode('erase');$('#auto-cut').textContent='✨ AI 자동 누끼';$('#cut-status').textContent='✨ AI 누끼를 누르면 사람·사물의 윤곽을 인식해 배경을 제거해요.';$('#cutout-dialog').showModal();
 }
 function setCutMode(mode) {
   state.mode = mode;
   $('#erase-mode').className = mode === 'erase' ? 'primary' : 'secondary';
   $('#restore-mode').className = mode === 'restore' ? 'primary' : 'secondary';
 }
-function autoCut() {
-  if (!basePixels) return;
-  const ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
-  const im = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = im.data;
-  const original = basePixels.data, w = im.width, h = im.height;
-  const tolerance = Number($('#tolerance').value);
-  const corners = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]].map(([x, y]) => {
-    const i = (y * w + x) * 4; return [original[i], original[i + 1], original[i + 2]];
-  });
-  const visited = new Uint8Array(w * h), queue = new Int32Array(w * h);
-  let head = 0, tail = 0;
-  function visit(index) {
-    if (index < 0 || index >= w * h || visited[index]) return;
-    visited[index] = 1;
-    const i = index * 4;
-    if (original[i + 3] < 10) return;
-    const ok = corners.some(([r, g, b]) => Math.hypot(original[i] - r, original[i + 1] - g, original[i + 2] - b) < tolerance);
-    if (ok) queue[tail++] = index;
+async function autoCut() {
+  if(!basePixels||cutBusy)return;
+  cutBusy=true;
+  const startId=state.selected;
+  const button=$('#auto-cut'),status=$('#cut-status');
+  button.disabled=true;button.textContent='⏳ AI 누끼 처리 중…';
+  $('#apply-cut').disabled=true;
+  status.textContent='AI 모델 준비 중… 처음 실행 시 큰 모델 파일을 받아 시간이 걸릴 수 있어요.';
+  try {
+    const canvas=document.createElement('canvas');
+    canvas.width=cutCanvas.width;canvas.height=cutCanvas.height;
+    canvas.getContext('2d',{willReadFrequently:true}).putImageData(basePixels,0,0);
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('이미지 인코딩 실패')),'image/png'));
+    // IMG.LY IS-Net (AGPL-3.0): 실제 이미지 전경 분할 모델. 모든 처리는 브라우저에서 실행.
+    const mod=await import('https://esm.sh/@imgly/background-removal@1.7.0?bundle&target=es2022');
+    const removeBackground=mod.default||mod.removeBackground;
+    if(typeof removeBackground!=='function')throw new Error('AI 엔진을 불러오지 못했어요.');
+    let last='';
+    const foreground=await removeBackground(blob,{
+      model:'isnet_fp16',device:'cpu',
+      output:{format:'image/png',type:'foreground'},
+      progress:(key,current,total)=>{
+        const progress=total>0?' '+Math.round(current/total*100)+'%':'';
+        const message=key.startsWith('fetch')?'AI 모델 다운로드':key.startsWith('compute')?'인물·사물 윤곽 처리':'AI 누끼 준비';
+        const value=message+progress;
+        if(value!==last){last=value;status.textContent=value+' · 사진은 기기 밖으로 업로드되지 않아요.';}
+      }
+    });
+    if(state.selected!==startId||!$('#cutout-dialog').open)throw new Error('편집 중인 사진이 변경되었어요.');
+    const bitmap=await createImageBitmap(foreground);
+    const context=cutCanvas.getContext('2d',{willReadFrequently:true});
+    context.clearRect(0,0,cutCanvas.width,cutCanvas.height);
+    context.drawImage(bitmap,0,0,cutCanvas.width,cutCanvas.height);
+    bitmap.close?.();
+    status.textContent='✅ AI 누끼 완료! 가장자리를 지우개·복원으로 다듬은 후 적용해 주세요.';
+  }catch(err){
+    status.textContent='⚠️ AI 누끼를 완료하지 못했어요. 인터넷 연결과 브라우저를 확인하거나 수동 지우개를 사용해 주세요. ('+(err instanceof Error?err.message:'모델 오류')+')';
+    console.error('AI cutout error',err);
+  }finally{
+    cutBusy=false;button.disabled=false;button.textContent='✨ AI 자동 누끼 다시 실행';
+    $('#apply-cut').disabled=false;
   }
-  for (let x = 0; x < w; x++) { visit(x); visit((h - 1) * w + x); }
-  for (let y = 0; y < h; y++) { visit(y * w); visit(y * w + w - 1); }
-  while (head < tail) {
-    const at = queue[head++], x = at % w, y = (at / w) | 0;
-    d[at * 4 + 3] = 0;
-    if (x > 0) visit(at - 1);
-    if (x < w - 1) visit(at + 1);
-    if (y > 0) visit(at - w);
-    if (y < h - 1) visit(at + w);
-  }
-  ctx.putImageData(im, 0, 0);
 }
 function brushAt(e) {
-  if (!basePixels) return;
+  if (!basePixels||cutBusy) return;
   const point = pointerCoords(e, cutCanvas), cx = Math.round(point.x * cutCanvas.width), cy = Math.round(point.y * cutCanvas.height);
   const radius = Number($('#brush').value), ctx = cutCanvas.getContext('2d', { willReadFrequently: true });
   const image = ctx.getImageData(0, 0, cutCanvas.width, cutCanvas.height), d = image.data, original = basePixels.data;
   for (let y = Math.max(0, cy - radius); y < Math.min(cutCanvas.height, cy + radius); y++) {
     for (let x = Math.max(0, cx - radius); x < Math.min(cutCanvas.width, cx + radius); x++) {
-      if ((x - cx) ** 2 + (y - cy) ** 2 > radius ** 2) continue;
-      const index = (y * cutCanvas.width + x) * 4;
-      if (state.mode === 'erase') d[index + 3] = 0;
-      else { d[index] = original[index]; d[index + 1] = original[index + 1]; d[index + 2] = original[index + 2]; d[index + 3] = original[index + 3]; }
+      const distance=Math.hypot(x-cx,y-cy);if(distance>radius)continue;
+      const softness=Math.max(0,Math.min(1,(radius-distance)/Math.max(3,radius*.20)));
+      const strength=softness*.9;
+      const index=(y*cutCanvas.width+x)*4;
+      if(state.mode==='erase')d[index+3]=Math.round(d[index+3]*(1-strength));
+      else {
+        d[index]=original[index];d[index+1]=original[index+1];d[index+2]=original[index+2];
+        d[index+3]=Math.min(255,Math.round(d[index+3]+(original[index+3]-d[index+3])*strength));
+      }
     }
   }
   ctx.putImageData(image, 0, 0);
@@ -761,16 +827,16 @@ $('#auto-cut').onclick = autoCut;
 $('#erase-mode').onclick = () => setCutMode('erase');
 $('#restore-mode').onclick = () => setCutMode('restore');
 $('#brush').oninput = (e) => { $('#brush-label').textContent = e.target.value; };
-$('#tolerance').oninput = (e) => { $('#tolerance-label').textContent = e.target.value; };
+
 $('#reset-cut').onclick = () => { if (basePixels) cutCanvas.getContext('2d')?.putImageData(basePixels, 0, 0); };
 $('#apply-cut').onclick = () => {
-  const item = activeLayer(); if (!item || item.kind !== 'photo') return;
+  const item = activeLayer(); if (!item || item.kind !== 'photo' || cutBusy) return;
   const image = new Image();
   image.onload = () => { checkpoint(); item.image = image; $('#cutout-dialog').close(); render(); };
   image.src = cutCanvas.toDataURL('image/png');
 };
 $('#open-cut').onclick = openCutout;
-$('#close-cut').onclick = () => $('#cutout-dialog').close();
+$('#close-cut').onclick = () => {if(!cutBusy)$('#cutout-dialog').close();};
 
 $('#save').onclick = async () => {
   error('');
