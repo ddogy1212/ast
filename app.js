@@ -216,9 +216,9 @@ function choosePhoto(i) {
       const result=await response.json().catch(()=>({}));
       if(!response.ok||result.error)throw Error(result.error||'NASA 설명을 불러오지 못했어요');
       if(state.imageRequest!==selectionId)return;
-      if(result.titleKorean&&result.titleKorean.length>=4)
+      if(result.titleKorean&&result.titleKorean.length>=4&&!summary.title.includes('베딘 1'))
         object.textContent=result.titleKorean;
-      else if(result.title&&result.title!==p.name)
+      else if(result.title&&result.title!==p.name&&!summary.title.includes('베딘 1'))
         object.textContent=summary.title+' · '+result.title;
       if(result.title)scientific.textContent='NASA 공식 대상명 · '+result.title;
       if(result.description&&/[가-힣]/.test(result.description)){
