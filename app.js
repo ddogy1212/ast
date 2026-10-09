@@ -13,6 +13,37 @@ const ratios = {
 const colors = ['#ffffff', '#ded1ff', '#ffcfdf', '#ffdf94', '#b6edfa', '#1c2035'];
 const stickerSymbols = ['✦','☾','☆','♡','🪐','✨','🌙','💜','🎀','🦋','⭐','☁️','🌸','🧸','💫','♥'];
 const state = { month: 7, day: 19, photos: [], photo: 0, bg: null, ratio: 'photocard', style: 'clean', layers: [], selected: null, tab: 'text', newColor: '#ffffff', busy: false, imageRequest: 0, mode: 'erase' };
+const NASA_IMAGE_BASE = 'https://science.nasa.gov/specials/apps/what-did-hubble-see-on-your-birthday/images/';
+let birthdayArchivePromise = null;
+async function getBirthdayArchive() {
+  if (!birthdayArchivePromise) {
+    birthdayArchivePromise = (async () => {
+      const response = await fetch('./hubble-data.b64');
+      if (!response.ok) throw Error('허블 사진 데이터 파일을 불러오지 못했어요. GitHub에 hubble-data.b64가 있는지 확인해 주세요.');
+      if (!('DecompressionStream' in window)) throw Error('현재 브라우저는 생일 사진 데이터를 읽을 수 없어요. 최신 크롬 또는 사파리를 사용해 주세요.');
+      const encoded = (await response.text()).trim();
+      const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      return JSON.parse(await new Response(stream).text());
+    })().catch(e => { birthdayArchivePromise = null; throw e; });
+  }
+  return birthdayArchivePromise;
+}
+function getBirthdayPhotos(archive, month, day) {
+  const rows = archive[month + '-' + day] || [];
+  const scored = rows
+    .map(([file,name,source,observedYear,score]) => ({
+      image: NASA_IMAGE_BASE + encodeURIComponent(file),
+      name: name || 'Hubble image',
+      description: 'NASA 허블망원경의 실제 천체 관측 사진입니다. 자세한 내용은 NASA 원본 페이지를 참고하세요.',
+      source: source || 'https://science.nasa.gov/mission/hubble/',
+      observedYear,
+      score: Number(score) || 0
+    }))
+    .filter(photo => photo.score > 0)
+    .sort((a,b) => b.score - a.score);
+  return scored.slice(0, 5);
+}
 const card = $('#card'), cutCanvas = $('#cut-canvas');
 let dragId = null, painting = false, basePixels = null;
 const error = (message, studio = true) => { $(studio ? '#studio-error' : '#home-error').textContent = message || ''; };
@@ -38,10 +69,10 @@ async function start() {
   error('', false); state.busy = true;
   $('#start').disabled = true; $('#start').textContent = 'NASA 사진 찾는 중…';
   try {
-    const response = await fetch('/api/hubble?month=' + state.month + '&day=' + state.day);
-    const data = await response.json();
-    if (!response.ok || !data.photos?.length) throw Error(data.error || '이 날짜의 NASA 사진을 찾을 수 없어요.');
-    state.photos = data.photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean';
+    const archive = await getBirthdayArchive();
+    const photos = getBirthdayPhotos(archive, state.month, state.day);
+    if (!photos.length) throw Error('선택한 날짜의 허블 자료에는 은하·성운·행성 사진이 없어요. 다른 날짜를 선택해 주세요.');
+    state.photos = photos; state.photo = 0; state.layers = []; state.selected = null; state.ratio = 'photocard'; state.style = 'clean';
     $('#home').classList.add('hidden'); $('#studio').classList.remove('hidden');
     $('#birthday-label').textContent = state.month + '월 ' + state.day + '일';
     $('#clear-layers').disabled = false;
