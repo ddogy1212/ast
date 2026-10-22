@@ -4,7 +4,7 @@
 const $ = (q) => document.querySelector(q);
 const $$ = (q) => [...document.querySelectorAll(q)];
 const ratios = {
-  photocard: { w: 540, h: 860, label: '포토카드 · 54 × 86 mm' },
+  photocard: { w: 500, h: 760, label: '기본 · Canon ZINK 50 × 76 mm' },
   square: { w: 640, h: 640, label: '정사각형 · 1:1' },
   portrait: { w: 600, h: 800, label: '세로형 · 3:4' },
   landscape: { w: 640, h: 480, label: '가로형 · 4:3' },
